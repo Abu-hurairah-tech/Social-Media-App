@@ -210,25 +210,33 @@ export class StateManager {
     return this.data.users.find((u) => u.id === id) || null;
   }
 
-  login(email, password) {
-    if (!email || !password) {
-      return { success: false, message: 'Email and password are required.' };
+  onAuthChange(callback) {
+    return this.subscribe('auth:changed', callback);
+  }
+
+  login(emailOrStudentId, password) {
+    if (!emailOrStudentId || !password) {
+      return { success: false, message: 'Email or Student ID and password are required.' };
     }
-    const cleanEmail = email.trim().toLowerCase();
-    const user = this.data.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    const cleanId = emailOrStudentId.trim().toLowerCase();
+    const user = this.data.users.find((u) =>
+      (u.email && u.email.toLowerCase() === cleanId) ||
+      (u.studentId && u.studentId.toLowerCase() === cleanId)
+    );
 
     if (!user) {
-      return { success: false, message: 'Invalid email or password.' };
+      return { success: false, message: 'Invalid email/student ID or password.' };
     }
     if (user.password && user.password !== password) {
-      return { success: false, message: 'Invalid email or password.' };
+      return { success: false, message: 'Invalid email/student ID or password.' };
     }
 
     this.data.currentUserId = user.id;
     this.saveState();
     this.publish('auth:login', user);
     this.publish('auth:changed', user);
-    return { success: true, message: 'Login successful.', user };
+    const token = `jwt_mock_${user.id}_${Date.now()}`;
+    return { success: true, message: 'Login successful.', user, token };
   }
 
   register(userData) {
@@ -241,21 +249,34 @@ export class StateManager {
       return { success: false, message: 'An account with this email already exists.' };
     }
 
+    const departmentMap = {
+      'Computer Science': 'School of Computing',
+      'Artificial Intelligence': 'Data Science Institute',
+      'Software Engineering': 'School of Computing',
+      'Cybersecurity': 'School of Computing',
+      'Bioinformatics': 'Faculty of Sciences'
+    };
+
+    const major = userData.major || 'Computer Science';
+    const department = userData.department || departmentMap[major] || 'School of Computing';
+
     const newUser = {
-      id: 'u_' + Date.now().toString(36),
+      id: 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
       name: userData.name.trim(),
       email: cleanEmail,
       password: userData.password,
-      headline: userData.headline || 'Student Scholar',
-      major: userData.major || 'Undeclared',
-      department: userData.department || 'Faculty of Sciences',
+      headline: userData.headline || `${major} Scholar`,
+      major: major,
+      department: department,
+      semester: userData.semester || 'Fall 2026',
+      university: userData.university || 'Pacific University',
       year: userData.year || 'Freshman',
-      bio: userData.bio || 'New student joining the Academic Coursework Showcase network.',
+      bio: userData.bio || 'Student scholar showcasing coursework, projects, and research.',
       avatar: userData.avatar || 'assets/images/avatar-1.svg',
       coverImage: userData.coverImage || 'assets/images/cover-default.svg',
       studentId: userData.studentId || `PU-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       gpa: userData.gpa || '3.50',
-      location: userData.location || 'Main Campus',
+      location: userData.location || 'Campus Science Center',
       skills: userData.skills || [],
       courses: userData.courses || [],
       friends: [],
@@ -268,7 +289,8 @@ export class StateManager {
     this.publish('users:created', newUser);
     this.publish('auth:login', newUser);
     this.publish('auth:changed', newUser);
-    return { success: true, message: 'Account registered successfully.', user: newUser };
+    const token = `jwt_mock_${newUser.id}_${Date.now()}`;
+    return { success: true, message: 'Account registered successfully.', user: newUser, token };
   }
 
   logout() {
