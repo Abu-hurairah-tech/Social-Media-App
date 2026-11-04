@@ -1,0 +1,238 @@
+/**
+ * Academic Coursework Showcase — Core Layout Grid & Responsive Architecture
+ * css/layout.css
+ */
+
+/* App Wrapper */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-body);
+}
+
+/* Global Container */
+.container {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* 3-Column Desktop Application Grid */
+.app-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--right-sidebar-width);
+  gap: var(--space-6);
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4);
+  min-height: calc(100vh - var(--navbar-height));
+  width: 100%;
+}
+
+/* Left Navigation Column */
+.sidebar-left {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--space-6));
+  height: calc(100vh - var(--navbar-height) - var(--space-8));
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+/* Center Content Column */
+.main-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Right Widget / Sponsored Column */
+.sidebar-right {
+  position: sticky;
+  top: calc(var(--navbar-height) + var(--space-6));
+  height: calc(100vh - var(--navbar-height) - var(--space-8));
+  overflow-y: auto;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Custom Scrollbars for Sidebars */
+.sidebar-left::-webkit-scrollbar,
+.sidebar-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-left::-webkit-scrollbar-thumb,
+.sidebar-right::-webkit-scrollbar-thumb {
+  background-color: var(--border-color-strong);
+  border-radius: var(--radius-full);
+}
+
+/* ==========================================================================
+   Mobile Off-Canvas Drawer & Overlay
+   ========================================================================== */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--bg-modal-overlay);
+  z-index: var(--z-index-drawer);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-base), visibility var(--transition-base);
+}
+
+body.drawer-open .drawer-backdrop {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Lock body scroll when drawer or modal is active */
+body.drawer-open,
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Mobile Bottom Tab Navigation
+   ========================================================================== */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+  z-index: var(--z-index-sticky);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 var(--space-2);
+}
+
+.mobile-bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: var(--text-secondary);
+  font-size: var(--font-xs);
+  gap: 2px;
+  min-width: 48px;
+  min-height: 48px;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.mobile-bottom-nav-item.active,
+.mobile-bottom-nav-item:hover {
+  color: var(--color-primary);
+}
+
+.mobile-bottom-nav-item svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet Breakpoint (768px - 1024px): 2 Columns */
+@media (max-width: 1024px) {
+  .app-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+
+  .sidebar-right {
+    display: none; /* Collapsed on tablet */
+  }
+
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+/* Mobile Breakpoint (< 768px): 1 Column + Drawer + Bottom Nav */
+@media (max-width: 768px) {
+  .app-layout {
+    display: block;
+    padding: var(--space-3) var(--space-3) 76px var(--space-3);
+  }
+
+  /* Left sidebar transforms into off-canvas drawer */
+  .sidebar-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--bg-surface);
+    box-shadow: var(--shadow-xl);
+    z-index: calc(var(--z-index-drawer) + 1);
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    padding: var(--space-6) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  body.drawer-open .sidebar-left {
+    transform: translateX(0);
+  }
+
+  .sidebar-right {
+    display: none;
+  }
+
+  .mobile-bottom-nav {
+    display: flex;
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .show-mobile {
+    display: block !important;
+  }
+}
+
+/* Desktop Only Helpers */
+@media (min-width: 769px) {
+  .show-mobile {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   Utility Flex & Grid Helpers
+   ========================================================================== */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.flex-1 { flex: 1; }
+.flex-wrap { flex-wrap: wrap; }
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+.gap-6 { gap: var(--space-6); }
