@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="340" viewBox="0 0 600 340">
+  <defs>
+    <linearGradient id="p4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#eab308" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="340" rx="12" fill="url(#p4)" />
+  <rect x="230" y="80" width="140" height="90" rx="10" fill="#ffffff" fill-opacity="0.2" />
+  <circle cx="260" cy="180" r="18" fill="#1e293b" />
+  <circle cx="340" cy="180" r="18" fill="#1e293b" />
+  <rect x="40" y="240" width="520" height="65" rx="8" fill="#0f172a" fill-opacity="0.6" />
+  <text x="60" y="270" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#ffffff">ROB401 — Autonomous Campus Delivery Rover</text>
+  <text x="60" y="292" font-family="-apple-system, sans-serif" font-size="14" fill="#fef08a">LiDAR-based SLAM and obstacle avoidance with ROS 2</text>
+</svg>
