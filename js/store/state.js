@@ -72,28 +72,42 @@ export class StateManager {
   }
 
   loadState() {
+    const defaultState = this.getDefaultState();
     let raw = null;
     try {
       raw = getStorageItem(STORAGE_KEY);
     } catch (e) {
-      const defaultState = this.getDefaultState();
       this.saveState(defaultState);
       return defaultState;
     }
 
     if (!raw) {
-      const defaultState = this.getDefaultState();
       this.saveState(defaultState);
       return defaultState;
     }
+
     try {
       const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        this.saveState(defaultState);
+        return defaultState;
+      }
+
       return {
-        ...this.getDefaultState(),
-        ...parsed
+        ...defaultState,
+        ...parsed,
+        users: Array.isArray(parsed.users) ? parsed.users : defaultState.users,
+        posts: Array.isArray(parsed.posts) ? parsed.posts : defaultState.posts,
+        comments: Array.isArray(parsed.comments) ? parsed.comments : defaultState.comments,
+        friendRequests: Array.isArray(parsed.friendRequests) ? parsed.friendRequests : defaultState.friendRequests,
+        conversations: Array.isArray(parsed.conversations) ? parsed.conversations : defaultState.conversations,
+        messages: Array.isArray(parsed.messages) ? parsed.messages : defaultState.messages,
+        groups: Array.isArray(parsed.groups) ? parsed.groups : defaultState.groups,
+        marketplace: Array.isArray(parsed.marketplace) ? parsed.marketplace : defaultState.marketplace,
+        adCampaigns: Array.isArray(parsed.adCampaigns) ? parsed.adCampaigns : defaultState.adCampaigns,
+        orders: Array.isArray(parsed.orders) ? parsed.orders : defaultState.orders
       };
     } catch (e) {
-      const defaultState = this.getDefaultState();
       this.saveState(defaultState);
       return defaultState;
     }
@@ -309,10 +323,10 @@ export class StateManager {
     return this.data.posts.find((p) => p.id === postId) || null;
   }
 
-  createPost(postData) {
+  createPost(postData = {}) {
     const currentUser = this.getCurrentUser();
     const newPost = {
-      id: 'p_' + Date.now().toString(36),
+      id: 'p_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       authorId: postData.authorId || (currentUser ? currentUser.id : 'u1'),
       title: postData.title ? postData.title.trim() : 'Coursework Update',
       courseCode: postData.courseCode ? postData.courseCode.trim() : 'CS501',
@@ -340,6 +354,11 @@ export class StateManager {
   }
 
   toggleReaction(postId, reactionType = 'like') {
+    const ALLOWED_REACTIONS = ['like', 'heart', 'celebrate', 'idea', 'thinking'];
+    if (!ALLOWED_REACTIONS.includes(reactionType)) {
+      reactionType = 'like';
+    }
+
     const post = this.data.posts.find((p) => p.id === postId);
     if (!post) throw new Error(`Post with id "${postId}" not found`);
 
@@ -378,7 +397,7 @@ export class StateManager {
 
     const currentUser = this.getCurrentUser();
     const newComment = {
-      id: 'c_' + Date.now().toString(36),
+      id: 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       postId,
       authorId: currentUser ? currentUser.id : 'u1',
       text: text.trim(),
@@ -505,7 +524,7 @@ export class StateManager {
 
     const now = new Date().toISOString();
     const newMsg = {
-      id: 'm_' + Date.now().toString(36),
+      id: 'm_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       conversationId: roomId,
       senderId: currentUserId,
       text: cleanText,
@@ -530,10 +549,10 @@ export class StateManager {
     return [...this.data.groups];
   }
 
-  createGroup(groupData) {
+  createGroup(groupData = {}) {
     const currentUserId = this.getCurrentUser() ? this.getCurrentUser().id : 'u1';
     const newGroup = {
-      id: 'g_' + Date.now().toString(36),
+      id: 'g_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       name: groupData.name ? groupData.name.trim() : 'New Academic Group',
       code: groupData.code ? groupData.code.trim().toUpperCase() : 'GROUP-' + Math.floor(100 + Math.random() * 900),
       category: groupData.category || 'Academic',
@@ -582,10 +601,10 @@ export class StateManager {
     return items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
-  createMarketplaceItem(itemData) {
+  createMarketplaceItem(itemData = {}) {
     const currentUser = this.getCurrentUser();
     const newItem = {
-      id: 'item_' + Date.now().toString(36),
+      id: 'item_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       title: itemData.title ? itemData.title.trim() : 'Academic Listing',
       category: itemData.category || 'Textbooks',
       price: parseFloat(itemData.price) || 0.00,
@@ -614,10 +633,10 @@ export class StateManager {
     return [...this.data.adCampaigns];
   }
 
-  createAdCampaign(campaignData) {
+  createAdCampaign(campaignData = {}) {
     const currentUser = this.getCurrentUser();
     const newCampaign = {
-      id: 'ad_' + Date.now().toString(36),
+      id: 'ad_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       title: campaignData.title ? campaignData.title.trim() : 'Campus Showcase Ad',
       sponsorName: campaignData.sponsorName ? campaignData.sponsorName.trim() : (currentUser ? currentUser.name : 'University Sponsor'),
       tagline: campaignData.tagline ? campaignData.tagline.trim() : '',
@@ -650,7 +669,7 @@ export class StateManager {
     return this.data.orders.filter((o) => o.userId === currentUserId);
   }
 
-  createOrder(orderData) {
+  createOrder(orderData = {}) {
     const currentUser = this.getCurrentUser();
     const newOrder = {
       id: 'ord-' + Math.floor(1000 + Math.random() * 9000),
