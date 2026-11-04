@@ -38,6 +38,7 @@ export function formatRelativeTime(isoString) {
   try {
     const now = new Date();
     const date = new Date(isoString);
+    if (isNaN(date.getTime())) return 'Recently';
     const diffSec = Math.floor((now - date) / 1000);
     if (diffSec < 60) return 'Just now';
     const diffMin = Math.floor(diffSec / 60);
@@ -179,7 +180,7 @@ export function renderPostCard(post, options = {}) {
     <header class="post-header">
       <div class="post-author-box">
         <span class="avatar avatar-md">
-          <img src="${escapeHtml(author.avatar || 'assets/images/avatar-1.svg')}" alt="${escapeHtml(author.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${initials}</div>';" />
+          <img src="${escapeHtml(author.avatar || 'assets/images/avatar-1.svg')}" alt="${escapeHtml(author.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(initials)}</div>';" />
         </span>
         <div class="post-author-details">
           <div class="post-author-name-row">
@@ -385,7 +386,7 @@ function attachPostCardListeners(card, post) {
     return `
       <div class="comment-item ${isReply ? 'is-reply' : 'is-root'}" id="comment-${c.id}" data-comment-id="${c.id}">
         <span class="avatar ${avatarClass}">
-          <img src="${escapeHtml(commentAuthor.avatar || 'assets/images/avatar-2.svg')}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${cInitials}</div>';" />
+          <img src="${escapeHtml(commentAuthor.avatar || 'assets/images/avatar-2.svg')}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(cInitials)}</div>';" />
         </span>
         <div class="comment-bubble">
           <div class="comment-header">
@@ -441,18 +442,20 @@ function attachPostCardListeners(card, post) {
     });
     const getReplies = (parentId) => comments.filter((c) => (c.parentCommentId === parentId || c.parentId === parentId));
 
-    commentsList.innerHTML = rootComments.map((root) => {
-      const directReplies = getReplies(root.id);
-      const repliesHtml = directReplies.map((reply) => {
-        const subReplies = getReplies(reply.id);
-        const subHtml = subReplies.map((sr) => renderCommentItem(sr, true)).join('');
-        return renderCommentItem(reply, true) + subHtml;
+    function renderRepliesRecursively(parentId) {
+      const children = getReplies(parentId);
+      if (!children.length) return '';
+      return children.map((child) => {
+        return renderCommentItem(child, true) + renderRepliesRecursively(child.id);
       }).join('');
+    }
 
+    commentsList.innerHTML = rootComments.map((root) => {
+      const repliesHtml = renderRepliesRecursively(root.id);
       return `
         <li class="comment-thread" id="thread-${root.id}">
           ${renderCommentItem(root, false)}
-          ${directReplies.length > 0 ? `<div class="comment-replies-list">${repliesHtml}</div>` : '<div class="comment-replies-list"></div>'}
+          ${repliesHtml ? `<div class="comment-replies-list">${repliesHtml}</div>` : '<div class="comment-replies-list"></div>'}
         </li>
       `;
     }).join('');

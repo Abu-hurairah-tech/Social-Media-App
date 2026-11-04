@@ -499,7 +499,9 @@ export class StateManager {
         title: options.title || (post.title ? `Quote: ${post.title}` : 'Shared Showcase'),
         content: quoteText,
         courseCode: post.courseCode || 'GEN101',
-        tags: Array.isArray(post.tags) ? [...post.tags] : ['#Coursework', '#Shared'],
+        tags: Array.isArray(post.tags)
+          ? (post.tags.includes('#Shared') ? [...post.tags] : [...post.tags, '#Shared'])
+          : ['#Coursework', '#Shared'],
         codeSnippet: post.codeSnippet || null,
         originalPostId: post.id,
         originalPost: {
