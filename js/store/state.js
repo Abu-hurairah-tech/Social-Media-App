@@ -355,6 +355,7 @@ export class StateManager {
       tags: Array.isArray(postData.tags) ? postData.tags : ['#Coursework', '#Academic'],
       content: postData.content ? postData.content.trim() : '',
       media: postData.media || '',
+      codeSnippet: postData.codeSnippet || null,
       reactions: {
         like: [],
         heart: [],
@@ -363,14 +364,18 @@ export class StateManager {
         thinking: []
       },
       commentsCount: 0,
-      sharesCount: 0,
+      sharesCount: typeof postData.sharesCount === 'number' ? postData.sharesCount : 0,
       groupId: postData.groupId || null,
+      originalPostId: postData.originalPostId || null,
+      originalPost: postData.originalPost || null,
+      comments: [],
       createdAt: new Date().toISOString()
     };
 
     this.data.posts.unshift(newPost);
     this.saveState();
     this.publish('posts:created', newPost);
+    this.publish('state:posts', this.data.posts);
     this.publish('posts:updated', this.data.posts);
     return newPost;
   }
@@ -409,11 +414,16 @@ export class StateManager {
 
     this.saveState();
     this.publish('reaction:toggled', { postId, reactionType, reactions: post.reactions });
+    this.publish('state:posts', this.data.posts);
     this.publish('posts:updated', this.data.posts);
     return post;
   }
 
   addComment(postId, text, parentCommentId = null) {
+    if (!text || typeof text !== 'string' || !text.trim()) {
+      throw new Error('Comment text cannot be empty');
+    }
+
     const post = this.data.posts.find((p) => p.id === postId);
     if (!post) throw new Error(`Post with id "${postId}" not found`);
 
@@ -424,23 +434,100 @@ export class StateManager {
       authorId: currentUser ? currentUser.id : 'u1',
       text: text.trim(),
       parentCommentId: parentCommentId || null,
+      parentId: parentCommentId || null,
       reactions: { like: [] },
       createdAt: new Date().toISOString()
     };
 
+    if (!Array.isArray(post.comments)) {
+      post.comments = [];
+    }
+    post.comments.push(newComment);
+
+    if (!Array.isArray(this.data.comments)) {
+      this.data.comments = [];
+    }
     this.data.comments.push(newComment);
+
     post.commentsCount = (post.commentsCount || 0) + 1;
 
     this.saveState();
     this.publish('comments:created', newComment);
+    this.publish('state:posts', this.data.posts);
     this.publish('posts:updated', this.data.posts);
     return newComment;
   }
 
+  sharePost(postId, options = {}) {
+    const post = this.data.posts.find((p) => p.id === postId);
+    if (!post) throw new Error(`Post with id "${postId}" not found`);
+
+    post.sharesCount = (post.sharesCount || 0) + 1;
+
+    let newPost = null;
+    const currentUser = this.getCurrentUser();
+    const currentUserId = currentUser ? currentUser.id : 'u1';
+
+    if (options.groupId || options.type === 'group') {
+      newPost = this.createPost({
+        authorId: currentUserId,
+        groupId: options.groupId || null,
+        title: options.title || (post.title ? `[Shared] ${post.title}` : 'Shared Coursework'),
+        content: options.content || options.thought || options.quote || `Shared coursework from ${post.courseCode || 'course'}`,
+        courseCode: post.courseCode || 'GEN101',
+        tags: Array.isArray(post.tags) ? [...post.tags, '#GroupShare'] : ['#GroupShare', '#Coursework'],
+        codeSnippet: post.codeSnippet || null,
+        originalPostId: post.id,
+        originalPost: {
+          id: post.id,
+          title: post.title,
+          authorId: post.authorId,
+          courseCode: post.courseCode,
+          content: post.content
+        }
+      });
+      if (options.groupId) {
+        const group = this.data.groups.find((g) => g.id === options.groupId);
+        if (group) {
+          group.postCount = (group.postCount || 0) + 1;
+        }
+      }
+    } else if (options.type === 'feed' || options.quote || options.thought || options.toFeed || options.content) {
+      const quoteText = options.quote || options.thought || options.content || '';
+      newPost = this.createPost({
+        authorId: currentUserId,
+        title: options.title || (post.title ? `Quote: ${post.title}` : 'Shared Showcase'),
+        content: quoteText,
+        courseCode: post.courseCode || 'GEN101',
+        tags: Array.isArray(post.tags) ? [...post.tags] : ['#Coursework', '#Shared'],
+        codeSnippet: post.codeSnippet || null,
+        originalPostId: post.id,
+        originalPost: {
+          id: post.id,
+          title: post.title,
+          authorId: post.authorId,
+          courseCode: post.courseCode,
+          content: post.content
+        }
+      });
+    }
+
+    this.saveState();
+    this.publish('posts:shared', { postId, options, post, newPost });
+    this.publish('state:posts', this.data.posts);
+    this.publish('posts:updated', this.data.posts);
+    return newPost || post;
+  }
+
   getCommentsForPost(postId) {
-    return this.data.comments
+    const post = this.data.posts.find((p) => p.id === postId);
+    const comments = (this.data.comments || [])
       .filter((c) => c.postId === postId)
       .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    if (post && (!Array.isArray(post.comments) || post.comments.length !== comments.length)) {
+      post.comments = comments;
+    }
+    return comments;
   }
 
   // ==========================================================================

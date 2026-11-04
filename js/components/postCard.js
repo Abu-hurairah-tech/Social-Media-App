@@ -11,6 +11,8 @@
 import { state } from '../store/state.js';
 import { openModal } from './modal.js';
 
+export const createModal = openModal;
+
 /**
  * HTML-escape helper preventing XSS in user-authored posts and comments
  * @param {string} str
@@ -226,7 +228,7 @@ export function renderPostCard(post, options = {}) {
     <!-- Interactive Action Tray: Multi-Reactions Bar, Comment Toggle, Share Modal -->
     <div class="post-action-tray">
       <!-- Reaction Picker Popover (Hidden by default) -->
-      <div class="reaction-picker-popover hidden" id="reactionPopover-${post.id}">
+      <div class="reactions-popover reaction-picker-popover hidden" id="reactionPopover-${post.id}" role="toolbar" aria-label="Coursework reactions">
         <button type="button" class="reaction-picker-btn" data-reaction="like" aria-label="React with Like" title="Like">&#128077;</button>
         <button type="button" class="reaction-picker-btn" data-reaction="heart" aria-label="React with Love" title="Love">&#10084;&#65039;</button>
         <button type="button" class="reaction-picker-btn" data-reaction="celebrate" aria-label="React with Celebrate" title="Celebrate">&#127881;</button>
@@ -266,7 +268,7 @@ export function renderPostCard(post, options = {}) {
       <!-- Comment Composer Input -->
       <form class="comment-composer-form" id="commentForm-${post.id}">
         <span class="avatar avatar-sm">
-          <img src="${escapeHtml(currentUser ? currentUser.avatar : 'assets/images/avatar-1.svg')}" alt="User Avatar" />
+          <img src="${escapeHtml(currentUser ? currentUser.avatar : 'assets/images/avatar-1.svg')}" alt="User Avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(getAuthorInitials(currentUser ? currentUser.name : 'User'))}</div>';" />
         </span>
         <input
           type="text"
@@ -281,9 +283,9 @@ export function renderPostCard(post, options = {}) {
         </button>
       </form>
 
-      <!-- Comments List -->
+      <!-- Comments List (Threaded & Nested) -->
       <ul class="comments-list" id="commentsList-${post.id}">
-        <!-- Dynamically rendered comments -->
+        <!-- Dynamically rendered nested comments -->
       </ul>
     </section>
   `;
@@ -309,7 +311,7 @@ function attachPostCardListeners(card, post) {
   const commentsList = card.querySelector(`#commentsList-${post.id}`);
   const shareBtn = card.querySelector(`#btnShare-${post.id}`);
 
-  // 1. Reactions Toggle & Popover
+  // 1. Reactions Toggle & Multi-Reactions Popover
   if (reactionBtn && popover) {
     let hideTimeout = null;
 
@@ -321,23 +323,28 @@ function attachPostCardListeners(card, post) {
     const hidePopover = () => {
       hideTimeout = setTimeout(() => {
         popover.classList.add('hidden');
-      }, 350);
+      }, 300);
     };
 
-    // Long press or mouse hover shows multi-reactions popover
+    // Hover triggers
     reactionBtn.addEventListener('mouseenter', showPopover);
     reactionBtn.addEventListener('mouseleave', hidePopover);
     popover.addEventListener('mouseenter', showPopover);
     popover.addEventListener('mouseleave', hidePopover);
 
-    // Direct click toggles default 'like' reaction
+    // Direct click trigger: displays popover if hidden, otherwise toggles default reaction
     reactionBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      try {
-        state.toggleReaction(post.id, 'like');
-        refreshPostReactions(card, post.id);
-      } catch (err) {
-        console.error('Reaction error:', err);
+      if (popover.classList.contains('hidden')) {
+        showPopover();
+      } else {
+        try {
+          state.toggleReaction(post.id, 'like');
+          refreshPostReactions(card, post.id);
+          popover.classList.add('hidden');
+        } catch (err) {
+          console.error('Reaction toggle error:', err);
+        }
       }
     });
 
@@ -355,52 +362,161 @@ function attachPostCardListeners(card, post) {
         }
       });
     });
+
+    // Close popover when clicking anywhere else
+    document.addEventListener('click', (e) => {
+      if (!card.contains(e.target)) {
+        popover.classList.add('hidden');
+      }
+    });
   }
 
-  // 2. Comments Toggle & Render
-  let commentsLoaded = false;
+  // 2. Threaded Nested Comments Rendering & Handlers
+  function renderCommentItem(c, isReply = false) {
+    const commentAuthor = state.getUserById(c.authorId) || {
+      name: 'Peer Scholar',
+      avatar: 'assets/images/avatar-2.svg',
+      major: 'Scholar'
+    };
+    const cInitials = getAuthorInitials(commentAuthor.name);
+    const cTime = formatRelativeTime(c.createdAt);
+    const avatarClass = isReply ? 'avatar-xs' : 'avatar-sm';
+
+    return `
+      <div class="comment-item ${isReply ? 'is-reply' : 'is-root'}" id="comment-${c.id}" data-comment-id="${c.id}">
+        <span class="avatar ${avatarClass}">
+          <img src="${escapeHtml(commentAuthor.avatar || 'assets/images/avatar-2.svg')}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${cInitials}</div>';" />
+        </span>
+        <div class="comment-bubble">
+          <div class="comment-header">
+            <div class="comment-header-left">
+              <span class="comment-author-name">${escapeHtml(commentAuthor.name)}</span>
+              ${commentAuthor.major ? `<span class="comment-author-meta text-muted font-xs">&bull; ${escapeHtml(commentAuthor.major)}</span>` : ''}
+            </div>
+            <time class="comment-time" datetime="${escapeHtml(c.createdAt || '')}">${cTime}</time>
+          </div>
+          <p class="comment-text">${escapeHtml(c.text)}</p>
+          <div class="comment-actions">
+            <button type="button" class="btn-comment-reply" data-comment-id="${c.id}" aria-label="Reply to comment by ${escapeHtml(commentAuthor.name)}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 17 4 12 9 7"></polyline>
+                <path d="M20 18v-2a4 4 0 0 0-4-4H4"></path>
+              </svg>
+              <span>Reply</span>
+            </button>
+          </div>
+          <!-- Inline Reply Composer Targeting parentCommentId: comment.id -->
+          <div class="comment-reply-composer hidden" id="replyComposer-${c.id}">
+            <form class="reply-composer-form" data-parent-id="${c.id}">
+              <input
+                type="text"
+                class="comment-input reply-input"
+                placeholder="Write a reply to ${escapeHtml(commentAuthor.name)}..."
+                aria-label="Write reply to ${escapeHtml(commentAuthor.name)}"
+                required
+              />
+              <div class="reply-composer-actions">
+                <button type="button" class="btn btn-ghost btn-sm btn-reply-cancel" data-comment-id="${c.id}">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-sm btn-reply-submit">Reply</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   const renderComments = () => {
     if (!commentsList) return;
-    const comments = state.getCommentsForPost(post.id);
-    if (!comments || comments.length === 0) {
-      commentsList.innerHTML = `<li class="font-xs text-muted text-center py-2">No peer reviews yet. Be the first to provide feedback!</li>`;
+    const comments = state.getCommentsForPost(post.id) || [];
+    if (comments.length === 0) {
+      commentsList.innerHTML = `<li class="font-xs text-muted text-center py-3">No peer reviews yet. Be the first to provide feedback!</li>`;
       return;
     }
 
-    commentsList.innerHTML = comments.map((c) => {
-      const commentAuthor = state.getUserById(c.authorId) || {
-        name: 'Peer Scholar',
-        avatar: 'assets/images/avatar-2.svg'
-      };
-      const cInitials = getAuthorInitials(commentAuthor.name);
-      const cTime = formatRelativeTime(c.createdAt);
+    const allIds = new Set(comments.map((c) => c.id));
+    const rootComments = comments.filter((c) => {
+      const pId = c.parentCommentId || c.parentId;
+      return !pId || !allIds.has(pId);
+    });
+    const getReplies = (parentId) => comments.filter((c) => (c.parentCommentId === parentId || c.parentId === parentId));
+
+    commentsList.innerHTML = rootComments.map((root) => {
+      const directReplies = getReplies(root.id);
+      const repliesHtml = directReplies.map((reply) => {
+        const subReplies = getReplies(reply.id);
+        const subHtml = subReplies.map((sr) => renderCommentItem(sr, true)).join('');
+        return renderCommentItem(reply, true) + subHtml;
+      }).join('');
 
       return `
-        <li class="comment-item" id="comment-${c.id}">
-          <span class="avatar avatar-sm">
-            <img src="${escapeHtml(commentAuthor.avatar || 'assets/images/avatar-2.svg')}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${cInitials}</div>';" />
-          </span>
-          <div class="comment-bubble">
-            <div class="comment-header">
-              <span class="comment-author-name">${escapeHtml(commentAuthor.name)}</span>
-              <time class="comment-time">${cTime}</time>
-            </div>
-            <p class="comment-text">${escapeHtml(c.text)}</p>
-          </div>
+        <li class="comment-thread" id="thread-${root.id}">
+          ${renderCommentItem(root, false)}
+          ${directReplies.length > 0 ? `<div class="comment-replies-list">${repliesHtml}</div>` : '<div class="comment-replies-list"></div>'}
         </li>
       `;
     }).join('');
+
+    // Attach "Reply" button click listener to show inline reply composer
+    commentsList.querySelectorAll('.btn-comment-reply').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const commentId = btn.dataset.commentId;
+        const composer = commentsList.querySelector(`#replyComposer-${commentId}`);
+        if (composer) {
+          const wasHidden = composer.classList.contains('hidden');
+          commentsList.querySelectorAll('.comment-reply-composer').forEach((c) => c.classList.add('hidden'));
+          if (wasHidden) {
+            composer.classList.remove('hidden');
+            const input = composer.querySelector('.reply-input');
+            if (input) input.focus();
+          }
+        }
+      });
+    });
+
+    // Attach Cancel button handler
+    commentsList.querySelectorAll('.btn-reply-cancel').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const commentId = btn.dataset.commentId;
+        const composer = commentsList.querySelector(`#replyComposer-${commentId}`);
+        if (composer) composer.classList.add('hidden');
+      });
+    });
+
+    // Attach submit handler on inline reply forms
+    commentsList.querySelectorAll('.reply-composer-form').forEach((form) => {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const parentId = form.dataset.parentId;
+        const input = form.querySelector('.reply-input');
+        const replyText = input ? input.value.trim() : '';
+        if (!replyText) return;
+
+        try {
+          state.addComment(post.id, replyText, parentId);
+          renderComments(); // Re-render without collapsing comments section
+
+          const updatedPost = state.getPostById(post.id);
+          const countSpan = card.querySelector(`#counter-comments-${post.id}`);
+          if (countSpan && updatedPost) {
+            countSpan.textContent = `${updatedPost.commentsCount || 0} comments`;
+          }
+        } catch (err) {
+          console.error('Nested reply submission error:', err);
+        }
+      });
+    });
   };
 
+  // Toggle comments section
   if (commentToggleBtn && commentsSection) {
     commentToggleBtn.addEventListener('click', () => {
       const isHidden = commentsSection.classList.contains('hidden');
       if (isHidden) {
         commentsSection.classList.remove('hidden');
-        if (!commentsLoaded) {
-          renderComments();
-          commentsLoaded = true;
-        }
+        renderComments();
         if (commentInput) commentInput.focus();
       } else {
         commentsSection.classList.add('hidden');
@@ -408,7 +524,7 @@ function attachPostCardListeners(card, post) {
     });
   }
 
-  // Comment submission form
+  // Top-level comment submission form
   if (commentForm && commentInput) {
     commentForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -416,11 +532,10 @@ function attachPostCardListeners(card, post) {
       if (!text) return;
 
       try {
-        state.addComment(post.id, text);
+        state.addComment(post.id, text, null);
         commentInput.value = '';
-        renderComments();
+        renderComments(); // Re-render without collapsing
 
-        // Update comment counter in UI
         const updatedPost = state.getPostById(post.id);
         const countSpan = card.querySelector(`#counter-comments-${post.id}`);
         if (countSpan && updatedPost) {
@@ -432,64 +547,176 @@ function attachPostCardListeners(card, post) {
     });
   }
 
-  // 3. Share Action connecting to openModal
+  // 3. Post Share Modal via createModal
   if (shareBtn) {
     shareBtn.addEventListener('click', () => {
-      const postUrl = typeof window !== 'undefined'
+      const groups = typeof state.getGroups === 'function' ? state.getGroups() : [];
+      const courseClass = getCourseCategoryBadgeClass(post.courseCode);
+      const postUrl = typeof window !== 'undefined' && window.location
         ? `${window.location.origin}${window.location.pathname}#post-${post.id}`
-        : `#post-${post.id}`;
+        : `https://showcase.university.edu/feed#post-${post.id}`;
 
-      openModal({
+      const groupOptionsHtml = groups.length > 0
+        ? groups.map((g) => `<option value="${escapeHtml(g.id)}">${escapeHtml(g.name)} (${escapeHtml(g.code || 'GROUP')})</option>`).join('')
+        : '<option value="" disabled>No active study groups available</option>';
+
+      const modal = createModal({
         title: 'Share Coursework Showcase',
         content: `
           <div class="share-modal-container">
-            <p class="font-sm text-secondary mb-3">
-              Share <strong>${escapeHtml(post.title || 'Coursework Showcase')}</strong> with your academic network or study groups.
-            </p>
-            <div class="form-group mb-4">
-              <label for="sharePostUrlInput" class="form-label font-xs">Direct Link:</label>
-              <div class="flex items-center gap-2">
-                <input type="text" id="sharePostUrlInput" class="form-control font-sm" value="${escapeHtml(postUrl)}" readonly />
-                <button type="button" class="btn btn-primary" id="btnCopyShareUrl" aria-label="Copy direct share link">Copy</button>
+            <div class="share-post-preview mb-3">
+              <span class="badge ${courseClass} badge-xs">${escapeHtml(post.courseCode || 'Coursework')}</span>
+              <h4 class="font-sm font-bold text-primary mt-1">${escapeHtml(post.title || 'Coursework Showcase')}</h4>
+              <p class="font-xs text-secondary mt-1">${escapeHtml(post.content || '')}</p>
+            </div>
+
+            <!-- Option 1: Share to Feed (with quote thought) -->
+            <div class="share-option-card mb-3">
+              <div class="share-option-header">
+                <span class="share-option-icon">&#128221;</span>
+                <strong class="font-sm text-primary">Share to Feed</strong>
+              </div>
+              <p class="font-xs text-muted mb-2">Quote this showcase onto your feed with academic commentary.</p>
+              <textarea
+                id="shareQuoteInput"
+                class="form-control font-sm share-quote-input"
+                rows="2"
+                placeholder="Add your thoughts or review notes (optional)..."
+                aria-label="Add quote thoughts for post"
+              ></textarea>
+              <div class="flex justify-end mt-2">
+                <button type="button" class="btn btn-primary btn-sm btn-share-feed" id="btnConfirmShareFeed">
+                  Share to Feed
+                </button>
               </div>
             </div>
-            <div class="share-channels flex flex-col gap-2">
-              <button type="button" class="btn btn-outline text-start justify-start gap-2" id="btnShareTimeline" aria-label="Share to my profile timeline">
-                <span>&#128221;</span>
-                <span>Share to My Academic Timeline</span>
-              </button>
-              <button type="button" class="btn btn-outline text-start justify-start gap-2" id="btnShareGroup" aria-label="Share to study group cohort">
-                <span>&#128101;</span>
-                <span>Share to Study Group Cohort</span>
-              </button>
+
+            <!-- Option 2: Share to Study Group -->
+            <div class="share-option-card mb-3">
+              <div class="share-option-header">
+                <span class="share-option-icon">&#128101;</span>
+                <strong class="font-sm text-primary">Share to Study Group</strong>
+              </div>
+              <p class="font-xs text-muted mb-2">Share directly with your group members and study cohort.</p>
+              <div class="flex items-center gap-2">
+                <select id="shareGroupSelect" class="form-control font-sm share-group-select" aria-label="Select study group" ${groups.length === 0 ? 'disabled' : ''}>
+                  ${groupOptionsHtml}
+                </select>
+                <button type="button" class="btn btn-secondary btn-sm btn-share-group" id="btnConfirmShareGroup" ${groups.length === 0 ? 'disabled' : ''}>
+                  Share to Group
+                </button>
+              </div>
+            </div>
+
+            <!-- Option 3: Copy Direct Link -->
+            <div class="share-option-card">
+              <div class="share-option-header">
+                <span class="share-option-icon">&#128279;</span>
+                <strong class="font-sm text-primary">Direct Showcase Link</strong>
+              </div>
+              <div class="flex items-center gap-2 mt-2">
+                <input
+                  type="text"
+                  id="sharePostUrlInput"
+                  class="form-control font-sm share-url-input"
+                  value="${escapeHtml(postUrl)}"
+                  readonly
+                  aria-label="Direct post link"
+                />
+                <button type="button" class="btn btn-secondary btn-sm btn-copy-link" id="btnCopyShareUrl" aria-label="Copy direct share link">
+                  Copy Link
+                </button>
+              </div>
+              <div class="copy-feedback-msg font-xs text-success hidden mt-1" id="shareCopyFeedback">Copied to clipboard!</div>
             </div>
           </div>
         `,
         footerButtons: [
           {
             label: 'Close',
-            className: 'btn btn-secondary',
-            onClick: (modal) => modal.close()
+            className: 'btn btn-ghost',
+            onClick: (m) => m.close()
           }
         ]
       });
 
-      // Attach copy link listener inside modal
+      // Attach modal interactive listeners
       setTimeout(() => {
         const copyBtn = document.getElementById('btnCopyShareUrl');
-        const input = document.getElementById('sharePostUrlInput');
-        if (copyBtn && input) {
+        const urlInput = document.getElementById('sharePostUrlInput');
+        const feedbackMsg = document.getElementById('shareCopyFeedback');
+        const shareFeedBtn = document.getElementById('btnConfirmShareFeed');
+        const shareGroupBtn = document.getElementById('btnConfirmShareGroup');
+        const quoteInput = document.getElementById('shareQuoteInput');
+        const groupSelect = document.getElementById('shareGroupSelect');
+
+        // Copy direct link action
+        if (copyBtn && urlInput) {
           copyBtn.addEventListener('click', () => {
-            input.select();
-            if (typeof navigator !== 'undefined' && navigator.clipboard) {
-              navigator.clipboard.writeText(input.value);
+            urlInput.select();
+            let success = false;
+            if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(urlInput.value).catch(() => {});
+              success = true;
             }
-            copyBtn.textContent = 'Copied!';
-            copyBtn.classList.replace('btn-primary', 'btn-success');
+            if (!success && typeof document !== 'undefined' && document.execCommand) {
+              try {
+                document.execCommand('copy');
+                success = true;
+              } catch (e) {}
+            }
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied to clipboard!';
+            copyBtn.classList.add('btn-success');
+            if (feedbackMsg) feedbackMsg.classList.remove('hidden');
+
             setTimeout(() => {
-              copyBtn.textContent = 'Copy';
-              copyBtn.classList.replace('btn-success', 'btn-primary');
+              copyBtn.textContent = originalText;
+              copyBtn.classList.remove('btn-success');
+              if (feedbackMsg) feedbackMsg.classList.add('hidden');
             }, 2000);
+          });
+        }
+
+        // Share to Feed action
+        if (shareFeedBtn) {
+          shareFeedBtn.addEventListener('click', () => {
+            const quoteText = quoteInput ? quoteInput.value.trim() : '';
+            try {
+              state.sharePost(post.id, { type: 'feed', quote: quoteText });
+              const updated = state.getPostById(post.id);
+              const countSpan = card.querySelector(`#counter-shares-${post.id}`);
+              if (countSpan && updated) {
+                countSpan.textContent = `${updated.sharesCount || 0} shares`;
+              }
+              shareFeedBtn.textContent = 'Shared to Feed!';
+              shareFeedBtn.classList.add('btn-success');
+              setTimeout(() => modal.close(), 600);
+            } catch (err) {
+              console.error('Share to feed error:', err);
+            }
+          });
+        }
+
+        // Share to Study Group action
+        if (shareGroupBtn && groupSelect) {
+          shareGroupBtn.addEventListener('click', () => {
+            const selectedGroupId = groupSelect.value;
+            if (!selectedGroupId) return;
+            const quoteText = quoteInput ? quoteInput.value.trim() : '';
+            try {
+              state.sharePost(post.id, { type: 'group', groupId: selectedGroupId, quote: quoteText });
+              const updated = state.getPostById(post.id);
+              const countSpan = card.querySelector(`#counter-shares-${post.id}`);
+              if (countSpan && updated) {
+                countSpan.textContent = `${updated.sharesCount || 0} shares`;
+              }
+              shareGroupBtn.textContent = 'Shared to Group!';
+              shareGroupBtn.classList.add('btn-success');
+              setTimeout(() => modal.close(), 600);
+            } catch (err) {
+              console.error('Share to group error:', err);
+            }
           });
         }
       }, 50);
