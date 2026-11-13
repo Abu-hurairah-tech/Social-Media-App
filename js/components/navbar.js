@@ -89,8 +89,10 @@ export function renderNavbar(mountElement, options = {}) {
                 id="globalSearchInput"
                 placeholder="Search coursework (#CS501), projects, peers..."
                 aria-label="Search coursework and peers"
+                autocomplete="off"
               />
             </div>
+            <div class="navbar-search-dropdown hidden" id="navbarSearchDropdown" role="listbox" aria-label="Search suggestions"></div>
           </form>
         </div>
 
@@ -229,9 +231,10 @@ function attachNavbarListeners(mountElement, base) {
     });
   }
 
-  // Global search form submit
+  // Global search form submit & live user search autocomplete
   const searchForm = mountElement.querySelector('#navbarSearchForm');
   const searchInput = mountElement.querySelector('#globalSearchInput');
+  const searchDropdown = mountElement.querySelector('#navbarSearchDropdown');
   if (searchForm && searchInput) {
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -240,6 +243,60 @@ function attachNavbarListeners(mountElement, base) {
         window.location.href = `${base}pages/friends.html?q=${encodeURIComponent(query)}`;
       }
     });
+
+    if (searchDropdown) {
+      const esc = (str) => String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value.trim();
+        if (!q) {
+          searchDropdown.classList.add('hidden');
+          searchDropdown.innerHTML = '';
+          return;
+        }
+        const matches = typeof state.searchUsers === 'function' ? state.searchUsers(q).slice(0, 5) : [];
+        if (matches.length === 0) {
+          searchDropdown.innerHTML = `
+            <div class="search-dropdown-empty">No peers matching "${esc(q)}"</div>
+            <a href="${base}pages/friends.html?q=${encodeURIComponent(q)}" class="search-dropdown-footer">Search full directory &rarr;</a>
+          `;
+        } else {
+          searchDropdown.innerHTML = `
+            ${matches.map((u) => {
+              const av = u.avatar && !u.avatar.startsWith('http') && !u.avatar.startsWith('..') ? `${base}${u.avatar}` : (u.avatar || `${base}assets/images/avatar-1.svg`);
+              return `
+                <a href="${base}pages/profile.html?userId=${esc(u.id)}" class="search-dropdown-item" role="option">
+                  <span class="avatar avatar-xs"><img src="${esc(av)}" alt="${esc(u.name)}" /></span>
+                  <div class="search-dropdown-meta">
+                    <span class="search-dropdown-name">${esc(u.name)}</span>
+                    <span class="search-dropdown-sub">${esc(u.major || 'Computer Science')} &bull; ${esc(u.studentId || '')}</span>
+                  </div>
+                </a>
+              `;
+            }).join('')}
+            <a href="${base}pages/friends.html?q=${encodeURIComponent(q)}" class="search-dropdown-footer">See all results for "${esc(q)}" &rarr;</a>
+          `;
+        }
+        searchDropdown.classList.remove('hidden');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchForm.contains(e.target)) {
+          searchDropdown.classList.add('hidden');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          searchDropdown.classList.add('hidden');
+        }
+      });
+    }
   }
 
   // User Dropdown toggle
@@ -358,6 +415,67 @@ function attachNavbarStyles() {
     }
     .navbar-search {
       width: 100%;
+      position: relative;
+    }
+    .navbar-search-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-index-dropdown);
+      overflow: hidden;
+    }
+    .navbar-search-dropdown.hidden {
+      display: none;
+    }
+    .search-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: background-color var(--transition-fast);
+    }
+    .search-dropdown-item:hover {
+      background-color: var(--bg-surface-hover);
+    }
+    .search-dropdown-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .search-dropdown-name {
+      font-size: var(--font-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+    .search-dropdown-sub {
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+    }
+    .search-dropdown-empty {
+      padding: var(--space-3);
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .search-dropdown-footer {
+      display: block;
+      padding: var(--space-2) var(--space-3);
+      border-top: 1px solid var(--border-color-light);
+      font-size: var(--font-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+      text-align: center;
+      text-decoration: none;
+      background-color: var(--bg-surface-subtle);
+    }
+    .search-dropdown-footer:hover {
+      background-color: var(--bg-surface-hover);
     }
     .navbar-search-input {
       border-radius: var(--radius-full);
