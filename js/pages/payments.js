@@ -8,7 +8,7 @@ let selectedTarget = { type: 'marketplace', id: null, title: 'Academic Resource'
 function ensureAuthenticated() {
   const user = state.getCurrentUser();
   if (!user) {
-    window.location.href = 'login.html';
+    window.location.href = 'auth.html';
     return null;
   }
   return user;

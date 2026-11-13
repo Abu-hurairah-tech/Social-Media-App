@@ -15,8 +15,8 @@
   <div class="app-shell">
     <div id="navbarMount"></div>
 
-    <div class="app-layout app-layout--two-col">
-      <div id="sidebarMount"></div>
+    <div class="app-layout app-layout--two-col app-container">
+      <aside id="sidebarMount" class="sidebar-left" role="navigation" aria-label="Main Navigation"></aside>
 
       <main class="main-content" id="mainContent">
         <header class="card ads-page-header mb-4">
@@ -60,7 +60,7 @@
                 <input
                   type="text"
                   id="adTitleInput"
-                  class="form-input"
+                  class="form-control"
                   required
                   placeholder="e.g., Spring Hackathon 2026 Registration"
                 />
@@ -71,7 +71,7 @@
                 <input
                   type="text"
                   id="adSponsorInput"
-                  class="form-input"
+                  class="form-control"
                   required
                   placeholder="e.g., ACM Student Chapter"
                 />
@@ -81,7 +81,7 @@
                 <label class="form-label" for="adTaglineInput">Ad Copy / Tagline</label>
                 <textarea
                   id="adTaglineInput"
-                  class="form-input"
+                  class="form-control"
                   rows="3"
                   required
                   placeholder="Describe your event, workshop, or academic product..."
@@ -91,7 +91,7 @@
               <div class="ads-form-row-2">
                 <div class="form-group">
                   <label class="form-label" for="adAudienceInput">Target Audience</label>
-                  <select id="adAudienceInput" class="form-input">
+                  <select id="adAudienceInput" class="form-control">
                     <option value="All Students">All Students</option>
                     <option value="CS & Engineering">CS &amp; Engineering</option>
                     <option value="Data Science & AI">Data Science &amp; AI</option>
@@ -102,7 +102,7 @@
 
                 <div class="form-group">
                   <label class="form-label" for="adPlacementInput">Placement</label>
-                  <select id="adPlacementInput" class="form-input">
+                  <select id="adPlacementInput" class="form-control">
                     <option value="feed">Main News Feed</option>
                     <option value="all">Feed &amp; Right Rail</option>
                   </select>
@@ -112,12 +112,12 @@
               <div class="ads-form-row-2">
                 <div class="form-group">
                   <label class="form-label" for="adBudgetInput">Total Budget ($)</label>
-                  <input type="number" id="adBudgetInput" class="form-input" min="10" step="5" value="150" required />
+                  <input type="number" id="adBudgetInput" class="form-control" min="10" step="5" value="150" required />
                 </div>
 
                 <div class="form-group">
                   <label class="form-label" for="adDurationInput">Duration (Days)</label>
-                  <input type="number" id="adDurationInput" class="form-input" min="1" max="90" value="14" required />
+                  <input type="number" id="adDurationInput" class="form-control" min="1" max="90" value="14" required />
                 </div>
               </div>
 

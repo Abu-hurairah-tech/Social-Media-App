@@ -567,3 +567,22 @@ textarea.form-control {
   border-top: 1px solid var(--border-color);
   background-color: var(--bg-surface-subtle);
 }
+
+
+/* Modal: responsive safety on small screens */
+.modal-dialog { min-width: 0; }
+.modal-footer { flex-wrap: wrap; }
+@media (max-width: 600px) {
+  .modal-backdrop { padding: var(--space-2); align-items: flex-end; }
+  .modal-dialog {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    border-radius: var(--radius-xl) var(--radius-xl) var(--radius-md) var(--radius-md);
+  }
+  .modal-header { padding: var(--space-3) var(--space-4); }
+  .modal-body { padding: var(--space-4); }
+  .modal-footer { padding: var(--space-3) var(--space-4); }
+  .modal-footer .btn { flex: 1 1 auto; min-height: 44px; justify-content: center; }
+}
