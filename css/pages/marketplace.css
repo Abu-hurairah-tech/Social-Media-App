@@ -46,7 +46,7 @@
 }
 
 .marketplace-filters .filter-chip:hover {
-  background: var(--bg-hover);
+  background: var(--bg-surface-hover);
   color: var(--text-primary);
 }
 
@@ -63,7 +63,7 @@
   gap: var(--space-3);
   flex-wrap: wrap;
   padding-top: var(--space-2);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-color-light);
 }
 
 .marketplace-toggle-label {
@@ -101,7 +101,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 10;
-  background: var(--bg-hover);
+  background: var(--bg-surface-hover);
   overflow: hidden;
 }
 
@@ -171,7 +171,7 @@
 }
 
 .product-title {
-  font-size: var(--font-md);
+  font-size: var(--font-base);
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
   line-height: 1.35;
@@ -196,7 +196,7 @@
   color: var(--text-muted);
   margin-top: auto;
   padding-top: var(--space-2);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-color-light);
 }
 
 .product-actions {
@@ -222,7 +222,7 @@
   max-height: 240px;
   object-fit: cover;
   border-radius: var(--radius-md);
-  background: var(--bg-hover);
+  background: var(--bg-surface-hover);
 }
 
 .product-detail-specs {
@@ -231,7 +231,7 @@
   gap: var(--space-3);
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  background: var(--bg-hover);
+  background: var(--bg-surface-hover);
 }
 
 .marketplace-empty {

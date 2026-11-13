@@ -290,7 +290,7 @@
 
 @media (max-width: 768px) {
   .chat-workspace {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     height: calc(100vh - var(--navbar-height) - 84px);
     min-height: 460px;
   }
@@ -307,3 +307,13 @@
     max-width: 88%;
   }
 }
+
+
+/* Overflow safety for grid children and horizontally scrolling chip rows */
+.chat-workspace { max-width: 100%; }
+.chat-workspace > * { min-width: 0; max-width: 100%; }
+.chat-thread-pane { overflow: hidden; }
+.chat-quick-prompts { min-width: 0; max-width: 100%; scrollbar-width: none; }
+.chat-quick-prompts::-webkit-scrollbar { display: none; }
+.quick-prompt-chip { flex: 0 0 auto; }
+.conversation-item, .conversations-list { min-width: 0; }

@@ -106,7 +106,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-color-light);
   font-size: var(--font-sm);
 }
 
@@ -116,7 +116,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding-top: var(--space-3);
-  font-size: var(--font-md);
+  font-size: var(--font-base);
   font-weight: var(--font-weight-bold);
 }
 
@@ -149,7 +149,7 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-color-light);
 }
 
 .receipt-details dt {
@@ -182,7 +182,7 @@
 .order-history-item {
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-color-light);
   background: var(--bg-body);
 }
 
