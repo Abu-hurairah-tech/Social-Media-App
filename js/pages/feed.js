@@ -181,10 +181,41 @@ export function renderFeed() {
     return;
   }
 
+  const activeAds = typeof state.getActiveAds === 'function' ? state.getActiveAds('feed') : state.getAdCampaigns();
+  const inlineAd = activeAds && activeAds.length > 0 ? activeAds[0] : null;
+
   // Render each post using renderPostCard
-  posts.forEach((post) => {
+  posts.forEach((post, index) => {
     const cardEl = renderPostCard(post);
     container.appendChild(cardEl);
+
+    if (inlineAd && index === 1) {
+      const adEl = document.createElement('article');
+      adEl.className = 'card post-card sponsored-feed-card';
+      adEl.dataset.adId = inlineAd.id;
+      adEl.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span class="badge badge-primary">${escapeHtml(inlineAd.badge || 'Sponsored')}</span>
+          <span class="font-xs text-muted">${escapeHtml(inlineAd.sponsorName || 'Campus Sponsor')}</span>
+        </div>
+        <h3 class="font-md font-weight-semibold">${escapeHtml(inlineAd.title)}</h3>
+        <p class="font-sm text-secondary mt-1">${escapeHtml(inlineAd.tagline || '')}</p>
+        <div class="flex items-center justify-between mt-3">
+          <span class="font-xs text-muted">Target: ${escapeHtml(inlineAd.targetAudience || 'All Students')}</span>
+          <a href="${inlineAd.ctaLink && inlineAd.ctaLink !== '#' ? escapeHtml(inlineAd.ctaLink) : 'pages/ads-manager.html'}" class="btn btn-outline-primary btn-xs js-inline-ad-cta" data-ad-id="${escapeHtml(inlineAd.id)}">
+            ${escapeHtml(inlineAd.ctaText || 'Learn More')}
+          </a>
+        </div>
+      `;
+      if (typeof state.recordAdImpression === 'function') {
+        state.recordAdImpression(inlineAd.id);
+      }
+      const ctaLink = adEl.querySelector('.js-inline-ad-cta');
+      if (ctaLink && typeof state.recordAdClick === 'function') {
+        ctaLink.addEventListener('click', () => state.recordAdClick(inlineAd.id));
+      }
+      container.appendChild(adEl);
+    }
   });
 }
 
@@ -418,16 +449,21 @@ function renderSponsoredWidget() {
   const mount = document.getElementById('sponsoredPlacementBody');
   if (!mount) return;
 
-  const campaigns = state.getAdCampaigns();
+  const campaigns = typeof state.getActiveAds === 'function' ? state.getActiveAds('feed') : state.getAdCampaigns();
   const activeAd = (campaigns && campaigns.length > 0)
     ? campaigns[0]
     : {
+        id: null,
         title: 'Annual Computing Research Symposium 2026',
         sponsorName: 'Pacific University CS Dept',
         tagline: 'Submit coursework demos & software prototypes. Grants up to $5,000 for top undergraduate projects.',
         badge: 'Symposium Placement',
         ctaLink: 'pages/ads-manager.html'
       };
+
+  if (activeAd.id && typeof state.recordAdImpression === 'function') {
+    state.recordAdImpression(activeAd.id);
+  }
 
   mount.innerHTML = `
     <div class="sponsored-content">
@@ -438,12 +474,17 @@ function renderSponsoredWidget() {
       <p class="sponsored-tagline font-xs text-secondary mt-1">${escapeHtml(activeAd.tagline)}</p>
       <div class="flex items-center justify-between mt-3">
         <span class="font-xs text-muted">${escapeHtml(activeAd.sponsorName)}</span>
-        <a href="${activeAd.ctaLink || 'pages/ads-manager.html'}" class="btn btn-outline-primary btn-xs" aria-label="Learn more about ${escapeHtml(activeAd.title)}">
-          Learn More
+        <a href="${activeAd.ctaLink && activeAd.ctaLink !== '#' ? activeAd.ctaLink : 'pages/ads-manager.html'}" id="sponsoredWidgetCta" class="btn btn-outline-primary btn-xs" aria-label="Learn more about ${escapeHtml(activeAd.title)}">
+          ${escapeHtml(activeAd.ctaText || 'Learn More')}
         </a>
       </div>
     </div>
   `;
+
+  const cta = document.getElementById('sponsoredWidgetCta');
+  if (cta && activeAd.id && typeof state.recordAdClick === 'function') {
+    cta.addEventListener('click', () => state.recordAdClick(activeAd.id));
+  }
 }
 
 /**
