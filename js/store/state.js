@@ -608,6 +608,48 @@ export class StateManager {
     return true;
   }
 
+  searchUsers(query = '') {
+    const users = Array.isArray(this.data.users) ? this.data.users : [];
+    if (!query || typeof query !== 'string') return [...users];
+    const q = query.trim().toLowerCase();
+    if (!q) return [...users];
+
+    return users.filter((u) => {
+      const fields = [
+        u.name,
+        u.email,
+        u.major,
+        u.department,
+        u.studentId,
+        u.headline,
+        u.year,
+        u.location
+      ];
+      if (fields.some((f) => f && String(f).toLowerCase().includes(q))) return true;
+      if (Array.isArray(u.skills) && u.skills.some((s) => String(s).toLowerCase().includes(q))) return true;
+      if (Array.isArray(u.courses) && u.courses.some((c) => String(c).toLowerCase().includes(q))) return true;
+      return false;
+    });
+  }
+
+  removeFriend(targetUserId) {
+    const currentUserId = this.getCurrentUser() ? this.getCurrentUser().id : 'u1';
+    const currentUser = this.getUserById(currentUserId);
+    const targetUser = this.getUserById(targetUserId);
+    if (!currentUser || !targetUser) return false;
+
+    if (Array.isArray(currentUser.friends)) {
+      currentUser.friends = currentUser.friends.filter((id) => id !== targetUserId);
+    }
+    if (Array.isArray(targetUser.friends)) {
+      targetUser.friends = targetUser.friends.filter((id) => id !== currentUserId);
+    }
+
+    this.saveState();
+    this.publish('friends:updated', { senderId: currentUserId, receiverId: targetUserId, action: 'remove' });
+    return true;
+  }
+
   // ==========================================================================
   // Chat & Messaging Services
   // ==========================================================================

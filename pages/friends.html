@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Friends &amp; Peer Directory — Academic Coursework Showcase</title>
+
+  <!-- Core Design Tokens & Modular Stylesheets -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <!-- Dedicated Friends Page Stylesheet -->
+  <link rel="stylesheet" href="../css/pages/friends.css">
+</head>
+<body class="friends-body">
+  <div class="app-shell">
+    <!-- Global Header Navigation Mount -->
+    <div id="navbarMount"></div>
+
+    <!-- 3-Column Responsive Application Layout -->
+    <div class="app-layout app-container">
+      <!-- Left Column: Sidebar Navigation Mount -->
+      <aside id="sidebarMount" class="sidebar-left" role="navigation" aria-label="Main Navigation"></aside>
+
+      <!-- Center Column: Search, Requests & Peer Directory -->
+      <main class="main-content friends-main" role="main">
+        <!-- Directory Search & Department Filters -->
+        <section class="card friends-search-card" aria-label="Search Campus Study Peers">
+          <div class="friends-header-top">
+            <div>
+              <h1 class="friends-page-title">Friends &amp; Peer Directory</h1>
+              <p class="font-sm text-secondary">Connect with classmates, manage incoming requests, and discover study partners by major.</p>
+            </div>
+            <span class="badge badge-primary" id="friendsTotalCountBadge">0 Peers</span>
+          </div>
+
+          <div class="friends-search-bar">
+            <div class="input-group">
+              <span class="input-group-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>
+              </span>
+              <input
+                type="search"
+                id="friends-search-input"
+                class="form-control"
+                placeholder="Search students by name, major, student ID, skills, or course (e.g. CS501)..."
+                aria-label="Search campus peers"
+              />
+            </div>
+          </div>
+
+          <div class="department-filter-pills" id="departmentFilterPills" role="group" aria-label="Filter peers by major">
+            <button type="button" class="filter-pill active" data-major="All">All Majors</button>
+            <button type="button" class="filter-pill" data-major="Computer Science">Computer Science</button>
+            <button type="button" class="filter-pill" data-major="Artificial Intelligence">Artificial Intelligence</button>
+            <button type="button" class="filter-pill" data-major="Software Engineering">Software Engineering</button>
+            <button type="button" class="filter-pill" data-major="Bioinformatics">Bioinformatics</button>
+            <button type="button" class="filter-pill" data-major="Cybersecurity">Cybersecurity</button>
+          </div>
+        </section>
+
+        <!-- Friend Requests Queue -->
+        <section id="friendRequestsSection" class="friends-section" aria-label="Friend Requests">
+          <div class="section-header-row">
+            <h2 class="section-title">Friend Requests</h2>
+            <span class="badge badge-warning badge-xs" id="requestsCountBadge">0 Pending</span>
+          </div>
+          <div id="friend-requests-container" class="friend-requests-grid">
+            <!-- Dynamically populated by js/pages/friends.js -->
+          </div>
+        </section>
+
+        <!-- People You May Know / Suggested Peers -->
+        <section id="suggestedPeersSection" class="friends-section" aria-label="Suggested Study Peers">
+          <div class="section-header-row">
+            <h2 class="section-title">Discover Campus Peers</h2>
+            <span class="font-xs text-muted" id="suggestedCountLabel">0 students found</span>
+          </div>
+          <div id="suggested-peers-grid" class="peers-grid">
+            <!-- Dynamically populated by js/pages/friends.js -->
+          </div>
+        </section>
+
+        <!-- All Connected Friends -->
+        <section id="connectedFriendsSection" class="friends-section" aria-label="Connected Study Peers">
+          <div class="section-header-row">
+            <h2 class="section-title">My Study Peers</h2>
+            <span class="font-xs text-muted" id="connectedCountLabel">0 connected</span>
+          </div>
+          <div id="all-friends-grid" class="peers-grid">
+            <!-- Dynamically populated by js/pages/friends.js -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Right Column: Network Summary Widgets -->
+      <aside class="sidebar-right friends-aside" role="complementary" aria-label="Network Overview">
+        <div class="card widget-card">
+          <div class="widget-header flex items-center justify-between">
+            <h3 class="widget-title font-sm font-weight-semibold">Network Summary</h3>
+            <span class="badge badge-accent badge-xs">Active</span>
+          </div>
+          <div class="widget-body" id="networkSummaryWidget">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="card widget-card">
+          <div class="widget-header flex items-center justify-between">
+            <h3 class="widget-title font-sm font-weight-semibold">Outgoing Requests</h3>
+          </div>
+          <div class="widget-body" id="outgoingRequestsWidget">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Mobile Bottom Navigation Mount -->
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <!-- Page Controller Script (ES Module) -->
+  <script type="module" src="../js/pages/friends.js"></script>
+</body>
+</html>
