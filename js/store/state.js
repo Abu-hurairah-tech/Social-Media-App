@@ -686,12 +686,58 @@ export class StateManager {
 
     this.data.messages.push(newMsg);
     conversation.lastMessage = cleanText;
+    conversation.lastMessageSnippet = cleanText;
     conversation.lastMessageTimestamp = now;
 
     this.saveState();
     this.publish('messages:sent', newMsg);
+    this.publish('MESSAGE_SENT', newMsg);
     this.publish('conversations:updated', this.getConversations());
     return newMsg;
+  }
+
+  startOrGetConversation(targetUserId) {
+    const currentUserId = this.getCurrentUser() ? this.getCurrentUser().id : 'u1';
+    if (!targetUserId || targetUserId === currentUserId) {
+      const existing = this.getConversations();
+      return existing[0] || null;
+    }
+
+    let room = this.data.conversations.find(
+      (c) => Array.isArray(c.participants) &&
+        c.participants.includes(currentUserId) &&
+        c.participants.includes(targetUserId)
+    );
+
+    if (!room) {
+      const targetUser = this.getUserById(targetUserId);
+      const now = new Date().toISOString();
+      room = {
+        id: 'room_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
+        type: 'direct',
+        participants: [currentUserId, targetUserId],
+        name: targetUser ? targetUser.name : 'Study Peer',
+        lastMessage: 'Started a new academic conversation.',
+        lastMessageSnippet: 'Started a new academic conversation.',
+        lastMessageTimestamp: now,
+        unreadCount: 0
+      };
+      this.data.conversations.unshift(room);
+      this.saveState();
+      this.publish('conversations:updated', this.getConversations());
+    }
+    return room;
+  }
+
+  markConversationRead(roomId) {
+    const conversation = this.data.conversations.find((c) => c.id === roomId);
+    if (!conversation) return false;
+    if (conversation.unreadCount !== 0) {
+      conversation.unreadCount = 0;
+      this.saveState();
+      this.publish('conversations:updated', this.getConversations());
+    }
+    return true;
   }
 
   // ==========================================================================
