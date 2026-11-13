@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Study Groups — Academic Coursework Showcase</title>
+
+  <!-- Core Design Tokens & Modular Stylesheets -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <!-- Feed & Dedicated Groups Stylesheets -->
+  <link rel="stylesheet" href="../css/pages/feed.css">
+  <link rel="stylesheet" href="../css/pages/groups.css">
+</head>
+<body class="groups-body">
+  <div class="app-shell">
+    <!-- Global Header Navigation Mount -->
+    <div id="navbarMount"></div>
+
+    <!-- 3-Column Responsive Application Layout -->
+    <div class="app-layout app-container">
+      <!-- Left Column: Sidebar Navigation Mount -->
+      <aside id="sidebarMount" class="sidebar-left" role="navigation" aria-label="Main Navigation"></aside>
+
+      <!-- Center Column: Groups Directory & Discussion Feed -->
+      <main class="main-content groups-main" role="main">
+        <!-- Header Card: Search, Category Filters & Create Group Trigger -->
+        <section class="card groups-header-card" aria-label="Study Groups Controls">
+          <div class="groups-header-top">
+            <div>
+              <h1 class="groups-page-title">Academic Study Groups</h1>
+              <p class="font-sm text-secondary">Collaborate in course cohorts, research labs, and university student clubs.</p>
+            </div>
+            <button type="button" id="btnCreateGroup" class="btn btn-primary btn-sm" aria-label="Create Study Group">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Create Group</span>
+            </button>
+          </div>
+
+          <div class="groups-search-bar">
+            <input
+              type="search"
+              id="groupsSearchInput"
+              class="form-control"
+              placeholder="Search study groups by name, course code (e.g. CS-DIST-01), or topic..."
+              aria-label="Search study groups"
+            />
+          </div>
+
+          <div class="groups-filter-pills" id="groupsCategoryPills" role="group" aria-label="Filter groups by category">
+            <button type="button" class="filter-pill active" data-category="All">All Groups</button>
+            <button type="button" class="filter-pill" data-category="Academic">Academic</button>
+            <button type="button" class="filter-pill" data-category="Research">Research</button>
+            <button type="button" class="filter-pill" data-category="Coursework">Coursework</button>
+            <button type="button" class="filter-pill" data-category="Club">Club</button>
+          </div>
+        </section>
+
+        <!-- My Joined Groups Section -->
+        <section id="myGroupsSection" class="groups-section" aria-label="My Joined Groups">
+          <div class="section-header-row">
+            <h2 class="section-title">My Joined Groups</h2>
+            <span class="badge badge-primary badge-xs" id="joinedGroupsCountBadge">0 Joined</span>
+          </div>
+          <div id="my-groups-grid" class="groups-grid">
+            <!-- Populated dynamically by js/pages/groups.js -->
+          </div>
+        </section>
+
+        <!-- Discover Groups Catalog Grid -->
+        <section id="discoverGroupsSection" class="groups-section" aria-label="Discover Study Groups">
+          <div class="section-header-row">
+            <h2 class="section-title">Discover Study Groups &amp; Cohorts</h2>
+            <span class="font-xs text-muted" id="discoverGroupsCountLabel">0 groups</span>
+          </div>
+          <div id="groups-directory" class="groups-grid">
+            <!-- Populated dynamically by js/pages/groups.js -->
+          </div>
+        </section>
+
+        <!-- Active Single Group Discussion Feed -->
+        <section id="singleGroupFeedSection" class="groups-section" aria-label="Group Discussion Wall">
+          <div class="card group-detail-banner" id="activeGroupBannerCard">
+            <!-- Populated dynamically when a group is selected -->
+          </div>
+
+          <!-- Group Post Composer -->
+          <div class="card composer-card" id="groupComposerCard">
+            <form id="groupPostForm" class="composer-form">
+              <div class="composer-header">
+                <strong class="font-sm" id="groupComposerTitle">Post to Group Discussion</strong>
+              </div>
+              <div class="composer-body">
+                <label for="groupPostTitleInput" class="sr-only">Discussion Topic</label>
+                <input
+                  type="text"
+                  id="groupPostTitleInput"
+                  class="form-control form-control-sm mb-2"
+                  placeholder="Discussion topic or lab question..."
+                />
+                <label for="groupPostContentInput" class="sr-only">Discussion Content</label>
+                <textarea
+                  id="groupPostContentInput"
+                  class="form-control composer-textarea"
+                  rows="2"
+                  placeholder="Share study notes, code reviews, or cohort announcements..."
+                  required
+                ></textarea>
+              </div>
+              <div class="composer-footer">
+                <span class="font-xs text-muted" id="groupComposerCodeHint">Group Feed</span>
+                <button type="submit" class="btn btn-primary btn-sm" id="btnGroupPostSubmit">Post to Group</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Group Posts Stream -->
+          <div id="group-posts-stream" class="feed-posts-container feed-stream" aria-live="polite">
+            <!-- Populated dynamically by js/pages/groups.js -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Right Column: Active Group Rules & Members -->
+      <aside class="sidebar-right groups-aside" role="complementary" aria-label="Active Group Details">
+        <div class="card widget-card">
+          <div class="widget-header">
+            <h3 class="widget-title font-sm font-weight-semibold">Active Group Members</h3>
+          </div>
+          <div class="widget-body" id="groupMembersWidget">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="card widget-card">
+          <div class="widget-header">
+            <h3 class="widget-title font-sm font-weight-semibold">Cohort Guidelines</h3>
+          </div>
+          <div class="widget-body">
+            <ul class="font-xs text-secondary flex flex-col gap-2">
+              <li>1. Cite course codes when sharing lab walkthroughs.</li>
+              <li>2. Uphold university academic integrity on assignments.</li>
+              <li>3. Tag peer reviewers constructively in threads.</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Mobile Bottom Navigation Mount -->
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <!-- Page Controller Script (ES Module) -->
+  <script type="module" src="../js/pages/groups.js"></script>
+</body>
+</html>

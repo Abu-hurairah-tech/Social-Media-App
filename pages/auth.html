@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academic Coursework Showcase — Authentication Portal</title>
+  
+  <!-- Core Design Tokens & Modular Stylesheets -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  
+  <!-- Dedicated Authentication Page Stylesheet -->
+  <link rel="stylesheet" href="../css/pages/auth.css">
+</head>
+<body class="auth-body">
+  <!-- Minimalist Brand Header -->
+  <header class="auth-navbar" role="banner">
+    <div class="auth-nav-container">
+      <a href="../index.html" class="auth-brand" aria-label="Academic Showcase Home">
+        <div class="auth-brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <div class="auth-brand-text">
+          <span class="auth-brand-title">Academic Showcase</span>
+          <span class="auth-brand-tagline">Coursework & Research Social Platform</span>
+        </div>
+      </a>
+
+      <div class="auth-nav-actions">
+        <a href="../index.html" class="auth-nav-link" id="navBackToFeed">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Explore Public Feed</span>
+        </a>
+        <button type="button" class="btn-theme-toggle" id="authThemeToggleBtn" aria-label="Toggle Dark / Light Theme" title="Toggle Theme">
+          <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main class="auth-main-wrapper" role="main">
+    <div class="auth-layout-container">
+      
+      <!-- Left Hero Branding Column -->
+      <section class="auth-hero-pane" aria-labelledby="authHeroTitle">
+        <div class="auth-hero-badge">
+          <span class="badge badge-primary">Pacific University Network</span>
+        </div>
+        <h1 class="auth-hero-title" id="authHeroTitle">
+          Showcase Your Coursework. <br>
+          <span class="text-gradient">Connect with Scholars.</span>
+        </h1>
+        <p class="auth-hero-description">
+          The unified academic social network for computer science, engineering, and scientific research. Share lab implementations, receive peer code reviews, collaborate in cohorts, and exchange academic resources.
+        </p>
+
+        <!-- Feature Showcase Highlights -->
+        <div class="auth-feature-list">
+          <div class="auth-feature-item">
+            <div class="feature-icon-bubble">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h2 class="feature-title">Coursework & Lab Repository</h2>
+              <p class="feature-desc">Tag projects by course code, attach live demos, and build an institutional portfolio.</p>
+            </div>
+          </div>
+
+          <div class="auth-feature-item">
+            <div class="feature-icon-bubble">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="feature-title">Peer Review & Cohorts</h2>
+              <p class="feature-desc">Constructive nested discussions, reactions, and study groups across departments.</p>
+            </div>
+          </div>
+
+          <div class="auth-feature-item">
+            <div class="feature-icon-bubble">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+            </div>
+            <div>
+              <h2 class="feature-title">Campus Marketplace & Ads</h2>
+              <p class="feature-desc">Buy and sell course textbooks, lab equipment, hardware, and promote academic events.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-hero-footer">
+          <div class="institutional-seal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Verified Institutional .EDU Directory Authentication</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Authentication Card Container -->
+      <section class="auth-card-pane">
+        <div class="auth-card" id="authCard">
+
+          <!-- Global Dynamic Alert Container -->
+          <div id="authAlertContainer" class="auth-alert-container" style="display: none;" role="alert">
+            <div id="authAlert" class="auth-alert">
+              <span class="auth-alert-icon" id="authAlertIcon">⚠️</span>
+              <span class="auth-alert-message" id="authAlertMessage"></span>
+              <button type="button" class="auth-alert-close" id="authAlertClose" aria-label="Dismiss alert">&times;</button>
+            </div>
+          </div>
+
+          <!-- Toast Notification Container -->
+          <div id="authToastContainer" class="auth-toast-container" aria-live="polite">
+            <div id="authToast" class="auth-toast" style="display: none;">
+              <span class="auth-toast-icon">✨</span>
+              <span class="auth-toast-message" id="authToastMessage">Notification message</span>
+            </div>
+          </div>
+
+          <!-- ACTIVE USER SESSION CARD (Rendered if user is already authenticated) -->
+          <div id="activeSessionCard" class="active-session-card" style="display: none;" aria-label="Active Student Session">
+            <div class="session-badge-header">
+              <span class="badge badge-success">Active Session</span>
+              <span class="session-status-dot"></span>
+            </div>
+
+            <div class="session-user-profile">
+              <div class="session-avatar-wrap">
+                <img id="sessionUserAvatar" src="../assets/images/avatar-1.svg" alt="User Avatar" class="session-avatar-img">
+              </div>
+              <div class="session-user-info">
+                <h2 class="session-user-name" id="sessionUserName">Harry Thorne</h2>
+                <p class="session-user-dept" id="sessionUserDept">School of Computing &bull; Computer Science</p>
+                <div class="session-meta-row">
+                  <span class="session-meta-tag" id="sessionUserStudentId">PU-2023-CS042</span>
+                  <span class="session-meta-email" id="sessionUserEmail">harry@univ.edu</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="session-actions-grid">
+              <a href="../index.html" class="btn btn-primary btn-block btn-lg" id="btnContinueToFeed">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                <span>Continue to Showcase Feed</span>
+              </a>
+
+              <button type="button" class="btn btn-outline btn-block" id="btnLogoutSession">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Switch Account / Sign Out</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- AUTHENTICATION FORMS CONTAINER (Sign In / Sign Up) -->
+          <div id="authFormsContainer" class="auth-forms-container">
+
+            <!-- Tab Segment Navigation -->
+            <nav class="auth-tabs" role="tablist" aria-label="Authentication Options">
+              <button type="button" class="auth-tab-btn active" id="tabSignIn" data-tab="login" role="tab" aria-selected="true" aria-controls="auth-form-login">
+                <span>Sign In</span>
+              </button>
+              <button type="button" class="auth-tab-btn" id="tabSignUp" data-tab="signup" role="tab" aria-selected="false" aria-controls="auth-form-signup">
+                <span>Create Account</span>
+              </button>
+            </nav>
+
+            <!-- ================================================================= -->
+            <!-- 1. SIGN IN FORM PANE                                              -->
+            <!-- ================================================================= -->
+            <form id="auth-form-login" class="auth-form active" novalidate>
+              
+              <!-- Demo Account Quick-Fill Box -->
+              <div class="demo-accounts-box">
+                <div class="demo-box-header">
+                  <span class="demo-box-label">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    One-Click Demo Evaluator Profiles
+                  </span>
+                  <span class="demo-box-hint">Click any profile to pre-fill</span>
+                </div>
+                <div class="demo-chips-grid">
+                  <button type="button" class="demo-user-chip" id="demoUserHarry" data-email="harry@univ.edu" data-pass="Password123!" title="Sign in as Harry Thorne (CS Senior)">
+                    <img src="../assets/images/avatar-1.svg" alt="Harry Thorne" class="demo-chip-avatar">
+                    <div class="demo-chip-info">
+                      <span class="demo-chip-name">Harry Thorne</span>
+                      <span class="demo-chip-dept">CS &bull; Senior</span>
+                    </div>
+                  </button>
+
+                  <button type="button" class="demo-user-chip" id="demoUserElena" data-email="elena@univ.edu" data-pass="Password123!" title="Sign in as Elena Rostova (AI Fellow)">
+                    <img src="../assets/images/avatar-2.svg" alt="Elena Rostova" class="demo-chip-avatar">
+                    <div class="demo-chip-info">
+                      <span class="demo-chip-name">Elena Rostova</span>
+                      <span class="demo-chip-dept">AI &bull; Grad</span>
+                    </div>
+                  </button>
+
+                  <button type="button" class="demo-user-chip" id="demoUserMarcus" data-email="marcus@univ.edu" data-pass="Password123!" title="Sign in as Marcus Vance (SE Sophomore)">
+                    <img src="../assets/images/avatar-3.svg" alt="Marcus Vance" class="demo-chip-avatar">
+                    <div class="demo-chip-info">
+                      <span class="demo-chip-name">Marcus Vance</span>
+                      <span class="demo-chip-dept">SE &bull; Soph</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Sign In Fields -->
+              <div class="form-group">
+                <label for="loginIdentifier" class="form-label">University Email or Student ID</label>
+                <div class="input-group">
+                  <span class="input-group-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                  </span>
+                  <input type="text" id="loginIdentifier" class="form-control" placeholder="harry@univ.edu or PU-2023-CS042" autocomplete="username" required>
+                </div>
+                <div class="invalid-feedback" id="loginIdentifierError"></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label for="loginPassword" class="form-label">Password</label>
+                  <a href="#" class="auth-helper-link" id="linkForgotPassword">Forgot password?</a>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </span>
+                  <input type="password" id="loginPassword" class="form-control" placeholder="Enter your account password" autocomplete="current-password" required>
+                  <button type="button" class="btn-toggle-password" id="toggleLoginPasswordBtn" aria-label="Toggle password visibility" style="min-height: 44px; min-width: 44px; padding: 6px;">
+                    <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg class="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                      <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                  </button>
+                </div>
+                <div class="invalid-feedback" id="loginPasswordError"></div>
+              </div>
+
+              <!-- Remember Me & Policy Row -->
+              <div class="auth-options-row">
+                <label class="custom-checkbox" for="rememberMe">
+                  <input type="checkbox" id="rememberMe">
+                  <span class="checkbox-indicator"></span>
+                  <span class="checkbox-label-text">Remember on this device</span>
+                </label>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="form-action-group">
+                <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-block btn-lg">
+                  <span>Sign In to Student Portal</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="auth-switch-note">
+                <span>New to Academic Showcase?</span>
+                <button type="button" class="btn-text-link" id="btnSwitchToSignUp">Create an account</button>
+              </div>
+            </form>
+
+            <!-- ================================================================= -->
+            <!-- 2. SIGN UP FORM PANE                                              -->
+            <!-- ================================================================= -->
+            <form id="auth-form-signup" class="auth-form" style="display: none;" novalidate>
+              <div class="signup-intro-note">
+                <p>Register with your university credentials to start sharing coursework and joining student cohorts.</p>
+              </div>
+
+              <!-- Full Name -->
+              <div class="form-group">
+                <label for="signupName" class="form-label">Full Name</label>
+                <div class="input-group">
+                  <span class="input-group-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                  </span>
+                  <input type="text" id="signupName" class="form-control" placeholder="e.g. Harry Potter" required>
+                </div>
+                <div class="invalid-feedback" id="signupNameError"></div>
+              </div>
+
+              <!-- University Email (.edu) -->
+              <div class="form-group">
+                <label for="signupEmail" class="form-label">University Email (.edu)</label>
+                <div class="input-group">
+                  <span class="input-group-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                      <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                  </span>
+                  <input type="email" id="signupEmail" class="form-control" placeholder="username@univ.edu" required>
+                </div>
+                <div class="form-helper">Must be an institutional or university email address.</div>
+                <div class="invalid-feedback" id="signupEmailError"></div>
+              </div>
+
+              <!-- Major / Department & Academic Year Row -->
+              <div class="form-row-2col">
+                <div class="form-group">
+                  <label for="signupMajor" class="form-label">Major / Department</label>
+                  <select id="signupMajor" class="form-control" required>
+                    <option value="" disabled selected>Select your discipline...</option>
+                    <option value="Computer Science">Computer Science (CS)</option>
+                    <option value="Artificial Intelligence">Artificial Intelligence (AI)</option>
+                    <option value="Software Engineering">Software Engineering (SE)</option>
+                    <option value="Cybersecurity">Cybersecurity (Cyber)</option>
+                    <option value="Bioinformatics">Bioinformatics (Bio)</option>
+                  </select>
+                  <div class="invalid-feedback" id="signupMajorError"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="signupYear" class="form-label">Academic Year</label>
+                  <select id="signupYear" class="form-control">
+                    <option value="Freshman">Freshman</option>
+                    <option value="Sophomore">Sophomore</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior" selected>Senior</option>
+                    <option value="Graduate">Graduate / Researcher</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Student ID / Enrollment Code -->
+              <div class="form-group">
+                <label for="signupStudentId" class="form-label">University Student ID</label>
+                <div class="input-group">
+                  <span class="input-group-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                      <line x1="7" y1="8" x2="17" y2="8"></line>
+                      <line x1="7" y1="12" x2="13" y2="12"></line>
+                    </svg>
+                  </span>
+                  <input type="text" id="signupStudentId" class="form-control" placeholder="e.g. PU-2026-CS001">
+                </div>
+                <div class="form-helper">Campus identification number for verified student badge.</div>
+                <div class="invalid-feedback" id="signupStudentIdError"></div>
+              </div>
+
+              <!-- Password & Password Confirmation Row -->
+              <div class="form-row-2col">
+                <div class="form-group">
+                  <label for="signupPassword" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <input type="password" id="signupPassword" class="form-control" placeholder="Min. 6 chars" required minlength="6">
+                  </div>
+                  <div class="invalid-feedback" id="signupPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="signupPasswordConfirm" class="form-label">Confirm Password</label>
+                  <div class="input-group">
+                    <span class="input-group-icon">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </span>
+                    <input type="password" id="signupPasswordConfirm" class="form-control" placeholder="Repeat password" required>
+                  </div>
+                  <div class="invalid-feedback" id="signupPasswordConfirmError"></div>
+                </div>
+              </div>
+
+              <!-- Password Strength Meter -->
+              <div class="password-meter" id="passwordMeterContainer">
+                <div class="meter-bar"><div class="meter-fill" id="meterFill"></div></div>
+                <span class="meter-label" id="meterLabel">Password strength</span>
+              </div>
+
+              <!-- Terms of Service & Honor Code -->
+              <div class="auth-options-row">
+                <label class="custom-checkbox" for="signupTerms">
+                  <input type="checkbox" id="signupTerms" required>
+                  <span class="checkbox-indicator"></span>
+                  <span class="checkbox-label-text">
+                    I agree to the <a href="#" class="auth-inline-link">Academic Integrity Honor Code</a> and <a href="#" class="auth-inline-link">Coursework Showcase Guidelines</a>.
+                  </span>
+                </label>
+                <div class="invalid-feedback" id="signupTermsError"></div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="form-action-group">
+                <button type="submit" id="signupSubmitBtn" class="btn btn-primary btn-block btn-lg">
+                  <span>Create Student Account</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="auth-switch-note">
+                <span>Already have a university account?</span>
+                <button type="button" class="btn-text-link" id="btnSwitchToSignIn">Sign In instead</button>
+              </div>
+            </form>
+
+          </div><!-- /auth-forms-container -->
+
+          <!-- Card Security Footer -->
+          <footer class="auth-card-footer">
+            <div class="security-note">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              <span>Zero-Framework Vanilla JS Client &bull; Ready for .NET 8 Web API</span>
+            </div>
+          </footer>
+
+        </div><!-- /auth-card -->
+      </section>
+
+    </div><!-- /auth-layout-container -->
+  </main>
+
+  <!-- ES6 Controller Module -->
+  <script type="module" src="../js/pages/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <rect width="160" height="160" rx="80" fill="url(#g4)" />
+  <circle cx="80" cy="62" r="28" fill="#ffffff" fill-opacity="0.9" />
+  <path d="M40 136 c0 -28 18 -44 40 -44 s40 16 40 44 Z" fill="#ffffff" fill-opacity="0.9" />
+  <text x="80" y="150" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">Priya (Bio)</text>
+</svg>

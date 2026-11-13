@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Payments & Checkout Page Styles
+   Responsive 2-column checkout form, virtual card preview, receipt, and history
+   ========================================================================== */
+
+.checkout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-5);
+}
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.checkout-form-card,
+.order-summary,
+.order-history-card {
+  padding: var(--space-5);
+}
+
+.payment-method-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.payment-method-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  font-size: var(--font-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.payment-method-option.is-selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.virtual-card-preview {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #1d4ed8 0%, #0f172a 100%);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.virtual-card-top,
+.virtual-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.virtual-card-number {
+  font-size: var(--font-lg);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.virtual-card-label {
+  display: block;
+  font-size: 10px;
+  opacity: 0.75;
+}
+
+.checkout-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.wallet-box {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.btn-block {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+}
+
+.order-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--font-sm);
+}
+
+.order-summary-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  font-size: var(--font-md);
+  font-weight: var(--font-weight-bold);
+}
+
+.receipt-card {
+  margin-top: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-success);
+  background: var(--bg-surface);
+}
+
+.receipt-badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-success);
+  color: #ffffff;
+  font-size: var(--font-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.receipt-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.receipt-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.receipt-details dt {
+  color: var(--text-secondary);
+}
+
+.receipt-details dd {
+  font-weight: var(--font-weight-semibold);
+  text-align: right;
+}
+
+.receipt-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.receipt-actions .btn {
+  min-height: 44px;
+  flex: 1;
+  justify-content: center;
+}
+
+.order-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.order-history-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-body);
+}
+
+@media (max-width: 1024px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .checkout-header,
+  .checkout-form-card,
+  .order-summary,
+  .order-history-card {
+    padding: var(--space-4);
+  }
+
+  .payment-method-tabs,
+  .checkout-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-header .btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

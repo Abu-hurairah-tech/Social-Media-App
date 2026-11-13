@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusConnect — Academic Coursework Showcase</title>
+
+  <!-- Core Design Tokens & Modular Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <!-- Dedicated Feed Page Stylesheet -->
+  <link rel="stylesheet" href="css/pages/feed.css">
+</head>
+<body class="feed-body">
+  <div class="app-shell">
+    <!-- Global Header Navigation Mount -->
+    <div id="navbarMount"></div>
+
+    <!-- 3-Column Responsive Application Layout -->
+    <div class="app-layout app-container">
+      <!-- Left Column: Sidebar Navigation Mount -->
+      <aside id="sidebarMount" class="sidebar-left" role="navigation" aria-label="Main Navigation"></aside>
+
+      <!-- Center Column: Post Composer & Main Feed Stream -->
+      <main class="main-content feed-main" role="main">
+        <!-- Post Composer Card -->
+        <section id="postComposer" class="card composer-card" aria-label="Create Coursework Showcase Post">
+          <form id="post-composer-form" class="composer-form">
+            <!-- Composer Header with Author Avatar and Audience Selector -->
+            <div class="composer-header">
+              <div class="composer-author-info">
+                <span class="avatar avatar-md" id="composerAvatarWrapper">
+                  <img id="composerAvatar" src="assets/images/avatar-1.svg" alt="User avatar" />
+                </span>
+                <div class="composer-author-text">
+                  <span class="font-sm font-weight-semibold" id="composerUserName">Harry Thorne</span>
+                  <span class="font-xs text-muted" id="composerUserMeta">Computer Science &bull; Fall 2026</span>
+                </div>
+              </div>
+              <div class="composer-audience-wrapper">
+                <label for="composerAudience" class="sr-only">Audience Selector</label>
+                <select id="composerAudience" class="form-control form-control-sm audience-select" aria-label="Post Audience Selector">
+                  <option value="public">&#127760; Public (Campus Network)</option>
+                  <option value="enrolled">&#127891; Course Enrolled Only</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Composer Content Textarea -->
+            <div class="composer-body">
+              <label for="composerContent" class="sr-only">Coursework Content</label>
+              <textarea
+                id="composerContent"
+                class="form-control composer-textarea"
+                placeholder="Share coursework breakthroughs, lab results, code snippets, or project showcases..."
+                rows="3"
+                aria-label="Coursework showcase content"
+                required
+              ></textarea>
+            </div>
+
+            <!-- Subject & Title Meta Row -->
+            <div class="composer-meta-row">
+              <div class="composer-field composer-field-course">
+                <label for="composerCourseCode" class="form-label font-xs">Coursework Subject Tag:</label>
+                <select id="composerCourseCode" class="form-control form-control-sm" aria-label="Coursework subject selector">
+                  <option value="CS501">CS-501 Advanced Distributed Systems</option>
+                  <option value="CS201">CS-201 Web Technologies</option>
+                  <option value="AI602">AI-602 Computer Vision &amp; Deep Learning</option>
+                  <option value="WT301">WT-301 Full Stack Web Architecture</option>
+                  <option value="MATH301">MATH-301 Discrete Mathematics</option>
+                  <option value="SE401">SE-401 Software Engineering &amp; Architecture</option>
+                  <option value="BIO420">BIO-420 Computational Genomics</option>
+                  <option value="SEC550">SEC-550 Applied Cryptography</option>
+                  <option value="General">General Academic Discussion</option>
+                </select>
+              </div>
+              <div class="composer-field composer-field-title">
+                <label for="composerTitle" class="form-label font-xs">Showcase Project Title:</label>
+                <input
+                  type="text"
+                  id="composerTitle"
+                  class="form-control form-control-sm"
+                  placeholder="e.g. Raft Consensus Node Implementation"
+                  aria-label="Project showcase title"
+                />
+              </div>
+            </div>
+
+            <!-- Code Snippet Collapsible Input -->
+            <div id="composerCodeSnippetContainer" class="composer-snippet-container hidden">
+              <div class="composer-snippet-header flex items-center justify-between">
+                <label for="composerCodeInput" class="form-label font-xs">Code Snippet (Syntax Highlighted Preview):</label>
+                <button type="button" class="btn btn-ghost btn-xs text-muted" id="btnCloseCodeSnippet" aria-label="Dismiss code snippet input">Dismiss</button>
+              </div>
+              <textarea
+                id="composerCodeInput"
+                class="form-control font-mono font-xs composer-code-textarea"
+                rows="4"
+                placeholder="// Paste your algorithm or code snippet here...&#10;func (rf *Raft) StartElection() { ... }"
+                aria-label="Code snippet content"
+              ></textarea>
+            </div>
+
+            <!-- Media Preview Container -->
+            <div id="composerMediaPreviewContainer" class="composer-media-preview-container hidden">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                    <circle cx="9" cy="9" r="2"></circle>
+                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                  </svg>
+                  <span class="font-xs text-muted" id="composerMediaLabel">Attached: assets/images/project-1.svg</span>
+                </div>
+                <button type="button" class="btn btn-ghost btn-xs text-danger" id="btnRemoveMedia" aria-label="Remove attached artifact media">Remove</button>
+              </div>
+            </div>
+
+            <!-- Composer Actions Tray & Submit -->
+            <div class="composer-footer">
+              <div class="composer-tools">
+                <button type="button" class="btn btn-outline btn-sm composer-tool-btn" id="btnToggleCode" aria-label="Toggle code snippet input">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  <span>Code Snippet</span>
+                </button>
+                <button type="button" class="btn btn-outline btn-sm composer-tool-btn" id="btnToggleMedia" aria-label="Attach coursework artifact media">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                    <circle cx="9" cy="9" r="2"></circle>
+                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                  </svg>
+                  <span>Attach Artifact</span>
+                </button>
+              </div>
+              <button type="submit" class="btn btn-primary btn-publish" id="btnPublishPost" aria-label="Publish showcase post">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                <span>Publish Showcase</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Feed Filter Navigation Tabs -->
+        <nav class="feed-filter-tabs card" aria-label="Coursework Feed Category Filters">
+          <button type="button" class="feed-filter-tab active" data-filter="all" aria-label="Filter All Coursework">All Coursework</button>
+          <button type="button" class="feed-filter-tab" data-filter="enrolled" aria-label="Filter My Enrolled Courses">My Enrolled Courses</button>
+          <button type="button" class="feed-filter-tab" data-filter="top" aria-label="Filter Top Rated">Top Rated</button>
+          <button type="button" class="feed-filter-tab" data-filter="projects" aria-label="Filter Project Showcases">Project Showcases</button>
+        </nav>
+
+        <!-- Feed Posts Stream Container -->
+        <section id="feed-posts-container" class="feed-posts-container feed-stream" aria-label="Feed posts stream" aria-live="polite">
+          <!-- Dynamically populated by js/pages/feed.js using renderPostCard -->
+        </section>
+      </main>
+
+      <!-- Right Column: Campus Widgets -->
+      <aside class="sidebar-right feed-aside" role="complementary" aria-label="Campus Widgets and Activity">
+        <!-- Upcoming Coursework Deadlines Widget -->
+        <div class="card widget-card deadlines-widget" id="deadlinesWidget">
+          <div class="widget-header flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-primary">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <h3 class="widget-title font-sm font-weight-semibold">Upcoming Deadlines</h3>
+            </div>
+            <span class="badge badge-warning badge-xs">3 Urgent</span>
+          </div>
+          <div class="widget-body">
+            <ul class="deadlines-list">
+              <li class="deadline-item">
+                <div class="deadline-details">
+                  <span class="deadline-name font-sm font-weight-medium">Raft Consensus Report</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="badge badge-course badge-course-cs badge-xs">CS-501</span>
+                    <span class="font-xs text-muted">Due in 2 days</span>
+                  </div>
+                </div>
+                <span class="badge badge-danger badge-xs">Nov 07</span>
+              </li>
+              <li class="deadline-item">
+                <div class="deadline-details">
+                  <span class="deadline-name font-sm font-weight-medium">U-Net Model Benchmark</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="badge badge-course badge-course-engineering badge-xs">AI-602</span>
+                    <span class="font-xs text-muted">Due in 4 days</span>
+                  </div>
+                </div>
+                <span class="badge badge-warning badge-xs">Nov 09</span>
+              </li>
+              <li class="deadline-item">
+                <div class="deadline-details">
+                  <span class="deadline-name font-sm font-weight-medium">Vanilla SPA Prototype</span>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="badge badge-course badge-course-design badge-xs">WT-301</span>
+                    <span class="font-xs text-muted">Due in 6 days</span>
+                  </div>
+                </div>
+                <span class="badge badge-primary badge-xs">Nov 11</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Suggested Academic Study Groups Widget -->
+        <div class="card widget-card study-groups-widget" id="studyGroupsWidget">
+          <div class="widget-header flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-secondary">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+              <h3 class="widget-title font-sm font-weight-semibold">Suggested Study Groups</h3>
+            </div>
+            <a href="pages/groups.html" class="font-xs text-primary font-weight-medium">View All</a>
+          </div>
+          <div class="widget-body" id="studyGroupsList">
+            <!-- Rendered dynamically by feed.js -->
+          </div>
+        </div>
+
+        <!-- Sponsored Academic Placement Widget -->
+        <div class="card widget-card sponsored-widget" id="sponsoredWidget">
+          <div class="widget-header flex items-center justify-between">
+            <span class="badge badge-secondary badge-xs">Symposium Placement</span>
+            <span class="font-xs text-muted">Sponsored</span>
+          </div>
+          <div class="widget-body" id="sponsoredPlacementBody">
+            <div class="sponsored-content">
+              <div class="sponsored-image-wrapper">
+                <img src="assets/images/cover-default.svg" alt="Department Symposium" class="sponsored-image" />
+              </div>
+              <h4 class="sponsored-title font-sm font-weight-semibold mt-2">Annual Computing Research Symposium 2026</h4>
+              <p class="sponsored-tagline font-xs text-secondary mt-1">Submit your coursework papers and software engineering demos. Grants up to $5,000 for top undergraduate projects.</p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="font-xs text-muted">Pacific University CS Dept</span>
+                <a href="pages/ads-manager.html" class="btn btn-outline-primary btn-xs" aria-label="Learn more about Department Symposium">Learn More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Online Cohort Peers Widget -->
+        <div class="card widget-card peers-widget" id="peersWidget">
+          <div class="widget-header flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="status-indicator online" aria-label="Online status"></span>
+              <h3 class="widget-title font-sm font-weight-semibold">Active Cohort Peers</h3>
+            </div>
+            <a href="pages/chat.html" class="font-xs text-primary font-weight-medium">Open Chat</a>
+          </div>
+          <div class="widget-body" id="peersListBody">
+            <!-- Rendered dynamically by feed.js -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Mobile Bottom Navigation Mount -->
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <!-- Page Controller Script (ES Module) -->
+  <script type="module" src="js/pages/feed.js"></script>
+</body>
+</html>
