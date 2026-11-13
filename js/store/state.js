@@ -810,11 +810,12 @@ export class StateManager {
 
   createMarketplaceItem(itemData = {}) {
     const currentUser = this.getCurrentUser();
+    const safePrice = Math.max(0, parseFloat(itemData.price) || 0);
     const newItem = {
       id: 'item_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
       title: itemData.title ? itemData.title.trim() : 'Academic Listing',
       category: itemData.category || 'Textbooks',
-      price: parseFloat(itemData.price) || 0.00,
+      price: safePrice,
       condition: itemData.condition || 'Good',
       courseCode: itemData.courseCode ? itemData.courseCode.trim().toUpperCase() : 'GEN101',
       sellerId: currentUser ? currentUser.id : 'u1',
@@ -822,6 +823,7 @@ export class StateManager {
       description: itemData.description ? itemData.description.trim() : '',
       image: itemData.image || 'assets/images/project-1.svg',
       status: 'available',
+      isSold: false,
       createdAt: new Date().toISOString()
     };
 
@@ -829,7 +831,20 @@ export class StateManager {
     this.saveState();
     this.publish('marketplace:created', newItem);
     this.publish('marketplace:updated', this.data.marketplace);
+    this.publish('MARKETPLACE_UPDATED', this.data.marketplace);
     return newItem;
+  }
+
+  updateProductStatus(itemId, status = 'available') {
+    const item = this.data.marketplace.find((i) => i.id === itemId);
+    if (!item) return null;
+
+    item.status = status;
+    item.isSold = status === 'sold';
+    this.saveState();
+    this.publish('marketplace:updated', this.data.marketplace);
+    this.publish('MARKETPLACE_UPDATED', this.data.marketplace);
+    return item;
   }
 
   // ==========================================================================
