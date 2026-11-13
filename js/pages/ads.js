@@ -6,7 +6,7 @@ import { escapeHtml } from '../components/postCard.js';
 function ensureAuthenticated() {
   const user = state.getCurrentUser();
   if (!user) {
-    window.location.href = 'login.html';
+    window.location.href = 'auth.html';
     return null;
   }
   return user;

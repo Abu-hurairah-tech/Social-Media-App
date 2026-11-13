@@ -260,6 +260,7 @@
 
 .profile-tab-btn {
   position: relative;
+  flex: 0 0 auto;
   min-height: 48px;
   padding: var(--space-3) var(--space-4);
   background: transparent;
@@ -541,4 +542,10 @@
   .edit-profile-row {
     grid-template-columns: 1fr;
   }
+}
+
+
+@media (max-width: 480px) {
+  .profile-tabs-card { padding: 0 var(--space-2); }
+  .profile-tab-btn { padding: var(--space-3) var(--space-3); font-size: var(--font-xs); }
 }

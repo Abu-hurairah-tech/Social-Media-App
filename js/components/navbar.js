@@ -539,6 +539,28 @@ function attachNavbarStyles() {
       .brand-title {
         font-size: var(--font-sm);
       }
+      .navbar-container {
+        padding: 0 var(--space-2);
+        gap: var(--space-2);
+      }
+      .navbar-left {
+        gap: var(--space-2);
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+      .navbar-right {
+        gap: 2px;
+        flex-shrink: 0;
+      }
+      .navbar-right .btn-icon {
+        width: 44px;
+        height: 44px;
+      }
+    }
+    @media (max-width: 480px) {
+      .navbar-brand-text {
+        display: none;
+      }
     }
   `;
   document.head.appendChild(style);

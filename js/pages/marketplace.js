@@ -11,7 +11,7 @@ let hideSoldOnly = false;
 function ensureAuthenticated() {
   const user = state.getCurrentUser();
   if (!user) {
-    window.location.href = 'login.html';
+    window.location.href = 'auth.html';
     return null;
   }
   return user;
@@ -200,13 +200,13 @@ function openCreateListingModal() {
   form.innerHTML = `
     <div class="form-group">
       <label class="form-label" for="listingTitle">Item Title</label>
-      <input type="text" id="listingTitle" class="form-input" required placeholder="e.g., Operating Systems Concepts (10th Ed)" />
+      <input type="text" id="listingTitle" class="form-control" required placeholder="e.g., Operating Systems Concepts (10th Ed)" />
     </div>
 
     <div class="form-grid-2">
       <div class="form-group">
         <label class="form-label" for="listingCategory">Category</label>
-        <select id="listingCategory" class="form-input">
+        <select id="listingCategory" class="form-control">
           <option value="Textbooks">Textbooks</option>
           <option value="Hardware">Hardware</option>
           <option value="Notes">Notes</option>
@@ -216,19 +216,19 @@ function openCreateListingModal() {
 
       <div class="form-group">
         <label class="form-label" for="listingPrice">Price (USD)</label>
-        <input type="number" id="listingPrice" class="form-input" min="0" step="0.01" required placeholder="25.00" />
+        <input type="number" id="listingPrice" class="form-control" min="0" step="0.01" required placeholder="25.00" />
       </div>
     </div>
 
     <div class="form-grid-2">
       <div class="form-group">
         <label class="form-label" for="listingCourseCode">Course Code</label>
-        <input type="text" id="listingCourseCode" class="form-input" placeholder="CS301" />
+        <input type="text" id="listingCourseCode" class="form-control" placeholder="CS301" />
       </div>
 
       <div class="form-group">
         <label class="form-label" for="listingCondition">Condition</label>
-        <select id="listingCondition" class="form-input">
+        <select id="listingCondition" class="form-control">
           <option value="Like New">Like New</option>
           <option value="Good" selected>Good</option>
           <option value="Fair">Fair</option>
@@ -239,7 +239,7 @@ function openCreateListingModal() {
 
     <div class="form-group">
       <label class="form-label" for="listingDescription">Description</label>
-      <textarea id="listingDescription" class="form-input" rows="3" placeholder="Include highlights, edition details, or pickup location on campus..."></textarea>
+      <textarea id="listingDescription" class="form-control" rows="3" placeholder="Include highlights, edition details, or pickup location on campus..."></textarea>
     </div>
 
     <p id="listingError" class="font-xs text-danger hidden" role="alert"></p>
