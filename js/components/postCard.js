@@ -10,8 +10,21 @@
 
 import { state } from '../store/state.js';
 import { openModal } from './modal.js';
+import { getBasePath } from './navbar.js';
 
 export const createModal = openModal;
+
+/**
+ * Resolves relative asset paths when rendered from subdirectories (e.g. pages/)
+ * @param {string} relPath
+ * @param {string} base
+ * @returns {string}
+ */
+function resolvePath(relPath, base = '') {
+  if (!relPath || typeof relPath !== 'string') return '';
+  if (/^(https?:|data:|\/|\.\.)/i.test(relPath)) return relPath;
+  return `${base}${relPath}`;
+}
 
 /**
  * HTML-escape helper preventing XSS in user-authored posts and comments
@@ -94,9 +107,11 @@ export function renderPostCard(post, options = {}) {
     return placeholder;
   }
 
+  const base = options.basePath !== undefined ? options.basePath : getBasePath();
   const currentUser = state.getCurrentUser();
   const currentUserId = currentUser ? currentUser.id : 'u1';
   const author = state.getUserById(post.authorId) || {
+    id: post.authorId || 'u1',
     name: 'Student Scholar',
     major: 'Computer Science',
     semester: 'Fall 2026',
@@ -153,7 +168,7 @@ export function renderPostCard(post, options = {}) {
     : '';
 
   // Media preview rendering
-  const mediaSrc = post.media || post.mediaUrl || '';
+  const mediaSrc = resolvePath(post.media || post.mediaUrl || '', base);
   const mediaHtml = mediaSrc
     ? `<div class="post-media-container">
         <img src="${escapeHtml(mediaSrc)}" alt="Showcase coursework artifact" class="post-media-image" loading="lazy" />
@@ -180,11 +195,11 @@ export function renderPostCard(post, options = {}) {
     <header class="post-header">
       <div class="post-author-box">
         <span class="avatar avatar-md">
-          <img src="${escapeHtml(author.avatar || 'assets/images/avatar-1.svg')}" alt="${escapeHtml(author.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(initials)}</div>';" />
+          <img src="${escapeHtml(resolvePath(author.avatar || 'assets/images/avatar-1.svg', base))}" alt="${escapeHtml(author.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(initials)}</div>';" />
         </span>
         <div class="post-author-details">
           <div class="post-author-name-row">
-            <a href="pages/profile.html?userId=${escapeHtml(author.id)}" class="post-author-name">${escapeHtml(author.name)}</a>
+            <a href="${escapeHtml(base)}pages/profile.html?userId=${escapeHtml(author.id)}" class="post-author-name">${escapeHtml(author.name)}</a>
             <span class="badge badge-secondary badge-xs">${escapeHtml(author.major || 'Computing')} &bull; ${escapeHtml(author.semester || 'Fall 2026')}</span>
           </div>
           <div class="post-meta-badges">
@@ -269,7 +284,7 @@ export function renderPostCard(post, options = {}) {
       <!-- Comment Composer Input -->
       <form class="comment-composer-form" id="commentForm-${post.id}">
         <span class="avatar avatar-sm">
-          <img src="${escapeHtml(currentUser ? currentUser.avatar : 'assets/images/avatar-1.svg')}" alt="User Avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(getAuthorInitials(currentUser ? currentUser.name : 'User'))}</div>';" />
+          <img src="${escapeHtml(resolvePath(currentUser ? currentUser.avatar : 'assets/images/avatar-1.svg', base))}" alt="User Avatar" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(getAuthorInitials(currentUser ? currentUser.name : 'User'))}</div>';" />
         </span>
         <input
           type="text"
@@ -292,7 +307,7 @@ export function renderPostCard(post, options = {}) {
   `;
 
   // Attach interactive behavior
-  attachPostCardListeners(card, post);
+  attachPostCardListeners(card, post, base);
 
   return card;
 }
@@ -301,8 +316,9 @@ export function renderPostCard(post, options = {}) {
  * Attaches event listeners for reactions, comments, and sharing
  * @param {HTMLElement} card
  * @param {Object} post
+ * @param {string} base
  */
-function attachPostCardListeners(card, post) {
+function attachPostCardListeners(card, post, base = '') {
   const reactionBtn = card.querySelector(`#btnReaction-${post.id}`);
   const popover = card.querySelector(`#reactionPopover-${post.id}`);
   const commentToggleBtn = card.querySelector(`#btnCommentToggle-${post.id}`);
@@ -386,7 +402,7 @@ function attachPostCardListeners(card, post) {
     return `
       <div class="comment-item ${isReply ? 'is-reply' : 'is-root'}" id="comment-${c.id}" data-comment-id="${c.id}">
         <span class="avatar ${avatarClass}">
-          <img src="${escapeHtml(commentAuthor.avatar || 'assets/images/avatar-2.svg')}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(cInitials)}</div>';" />
+          <img src="${escapeHtml(resolvePath(commentAuthor.avatar || 'assets/images/avatar-2.svg', base))}" alt="${escapeHtml(commentAuthor.name)}" onerror="this.onerror=null;this.parentElement.innerHTML='<div class=\\'avatar-fallback\\'>${escapeHtml(cInitials)}</div>';" />
         </span>
         <div class="comment-bubble">
           <div class="comment-header">
