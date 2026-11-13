@@ -926,12 +926,46 @@ export class StateManager {
 
   createOrder(orderData = {}) {
     const currentUser = this.getCurrentUser();
+    const itemIds = Array.isArray(orderData.itemIds)
+      ? [...orderData.itemIds]
+      : (orderData.itemId ? [orderData.itemId] : []);
+
+    let computedAmount = parseFloat(orderData.amount ?? orderData.total);
+    let resolvedTitle = orderData.itemTitle;
+
+    if (itemIds.length > 0) {
+      const matchedItems = this.data.marketplace.filter((i) => itemIds.includes(i.id));
+      if (!resolvedTitle && matchedItems.length > 0) {
+        resolvedTitle = matchedItems.map((i) => i.title).join(', ');
+      }
+      if (Number.isNaN(computedAmount)) {
+        computedAmount = matchedItems.reduce((sum, i) => sum + (parseFloat(i.price) || 0), 0);
+      }
+      matchedItems.forEach((item) => {
+        item.status = 'sold';
+        item.isSold = true;
+      });
+    }
+
+    if (orderData.adId) {
+      const ad = this.data.adCampaigns.find((a) => a.id === orderData.adId);
+      if (ad) {
+        const boostAmount = Math.max(0, Number.isNaN(computedAmount) ? 25 : computedAmount);
+        ad.budgetTotal = Number(((ad.budgetTotal || 0) + boostAmount).toFixed(2));
+        if (!resolvedTitle) resolvedTitle = `Ad Campaign Boost: ${ad.title}`;
+      }
+    }
+
+    const txnSuffix = Date.now().toString(36).toUpperCase().slice(-5) + Math.floor(100 + Math.random() * 900);
     const newOrder = {
       id: 'ord-' + Math.floor(1000 + Math.random() * 9000),
+      transactionId: 'TXN-' + txnSuffix,
       userId: currentUser ? currentUser.id : 'u1',
-      itemId: orderData.itemId || null,
-      itemTitle: orderData.itemTitle || 'Academic Resource Item',
-      amount: parseFloat(orderData.amount) || 0.00,
+      itemId: orderData.itemId || itemIds[0] || null,
+      itemIds,
+      adId: orderData.adId || null,
+      itemTitle: resolvedTitle || 'Academic Resource Item',
+      amount: Math.max(0, Number.isNaN(computedAmount) ? 0 : Number(computedAmount.toFixed(2))),
       paymentMethod: orderData.paymentMethod || 'Student Campus Card',
       deliveryType: orderData.deliveryType || 'Campus Pickup',
       status: 'Completed',
@@ -939,17 +973,17 @@ export class StateManager {
     };
 
     this.data.orders.unshift(newOrder);
-
-    if (orderData.itemId) {
-      const item = this.data.marketplace.find((i) => i.id === orderData.itemId);
-      if (item) {
-        item.status = 'sold';
-      }
-    }
-
     this.saveState();
     this.publish('orders:created', newOrder);
     this.publish('orders:updated', this.data.orders);
+    this.publish('ORDER_COMPLETED', newOrder);
+    if (itemIds.length > 0) {
+      this.publish('marketplace:updated', this.data.marketplace);
+      this.publish('MARKETPLACE_UPDATED', this.data.marketplace);
+    }
+    if (orderData.adId) {
+      this.publish('ads:updated', this.data.adCampaigns);
+    }
     return newOrder;
   }
 }

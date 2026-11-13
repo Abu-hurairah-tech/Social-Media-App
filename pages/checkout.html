@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Checkout &amp; Payments — CampusConnect</title>
+  <meta name="description" content="Simulated campus checkout for marketplace listings and sponsored campaign boosts." />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages/payments.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="navbarMount"></div>
+
+    <div class="app-layout app-layout--two-col">
+      <div id="sidebarMount"></div>
+
+      <main class="main-content" id="mainContent">
+        <header class="card checkout-header mb-4">
+          <div>
+            <h1 class="font-xl font-weight-bold">Campus Checkout &amp; Billing</h1>
+            <p class="font-sm text-secondary mt-1">
+              Complete marketplace purchases or fund sponsored campaigns using Student Wallet or Credit/Debit Card.
+            </p>
+          </div>
+          <a href="marketplace.html" class="btn btn-secondary">Back to Marketplace</a>
+        </header>
+
+        <div class="checkout-layout">
+          <!-- Left: Payment Form & Selector -->
+          <section class="card checkout-form-card" aria-label="Payment Details">
+            <form id="checkoutForm">
+              <div class="form-group">
+                <label class="form-label" for="checkoutTargetSelect">Select Item or Ad Campaign</label>
+                <select id="checkoutTargetSelect" class="form-input"></select>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Payment Method</span>
+                <div class="payment-method-tabs" role="radiogroup" aria-label="Payment Method">
+                  <label class="payment-method-option is-selected">
+                    <input type="radio" name="paymentMethod" value="Credit/Debit Card" checked />
+                    <span>Card (Credit / Debit)</span>
+                  </label>
+                  <label class="payment-method-option">
+                    <input type="radio" name="paymentMethod" value="Student Wallet" />
+                    <span>Student Wallet ($250.00 Credits)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Visual Card Preview & Fields -->
+              <div id="cardPaymentSection">
+                <div class="virtual-card-preview mb-4" aria-hidden="true">
+                  <div class="virtual-card-top">
+                    <span class="font-xs">CAMPUS PAY</span>
+                    <span class="font-xs">VISA / DEBIT</span>
+                  </div>
+                  <div class="virtual-card-number" id="previewCardNumber">4532 •••• •••• 8842</div>
+                  <div class="virtual-card-bottom font-xs">
+                    <div>
+                      <span class="virtual-card-label">CARDHOLDER</span>
+                      <div id="previewCardHolder">STUDENT MEMBER</div>
+                    </div>
+                    <div>
+                      <span class="virtual-card-label">EXPIRES</span>
+                      <div id="previewCardExpiry">08/28</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="cardHolderInput">Cardholder Name</label>
+                  <input type="text" id="cardHolderInput" class="form-input" placeholder="Harry Thorne" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="cardNumberInput">Card Number</label>
+                  <input type="text" id="cardNumberInput" class="form-input" maxlength="19" placeholder="4532 1234 5678 8842" />
+                </div>
+
+                <div class="checkout-row-2">
+                  <div class="form-group">
+                    <label class="form-label" for="cardExpiryInput">Expiry (MM/YY)</label>
+                    <input type="text" id="cardExpiryInput" class="form-input" maxlength="5" placeholder="08/28" />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cardCvvInput">CVV</label>
+                    <input type="password" id="cardCvvInput" class="form-input" maxlength="4" placeholder="123" />
+                  </div>
+                </div>
+              </div>
+
+              <div id="walletPaymentSection" class="wallet-box hidden">
+                <h2 class="font-sm font-weight-semibold">Student Campus Wallet</h2>
+                <p class="font-xs text-secondary mt-1">
+                  Instant fee-free settlement backed by your verified university student ID.
+                </p>
+                <div class="font-sm font-weight-bold text-primary mt-2">Available Balance: $250.00</div>
+              </div>
+
+              <div class="form-group mt-3">
+                <label class="form-label" for="deliveryTypeSelect">Fulfillment / Delivery</label>
+                <select id="deliveryTypeSelect" class="form-input">
+                  <option value="Campus Pickup (Student Union)">Campus Pickup (Student Union)</option>
+                  <option value="Digital Instant Delivery">Digital Instant Delivery</option>
+                  <option value="Dorm / Department Locker">Dorm / Department Locker</option>
+                </select>
+              </div>
+
+              <p id="checkoutError" class="font-xs text-danger mb-3 hidden" role="alert"></p>
+
+              <button type="submit" id="completePaymentBtn" class="btn btn-primary btn-block">
+                Confirm &amp; Pay
+              </button>
+            </form>
+
+            <!-- Confirmation Receipt -->
+            <div id="orderReceiptCard" class="receipt-card hidden" aria-live="polite">
+              <div class="receipt-badge">Payment Confirmed</div>
+              <h2 class="font-lg font-weight-bold mt-2">Order Complete!</h2>
+              <p class="font-sm text-secondary mt-1">
+                Your transaction has been recorded in your campus billing history.
+              </p>
+              <dl class="receipt-details font-sm mt-3">
+                <div><dt>Transaction Reference</dt><dd id="receiptTxnId">TXN-00000</dd></div>
+                <div><dt>Order ID</dt><dd id="receiptOrderId">ord-0000</dd></div>
+                <div><dt>Item / Campaign</dt><dd id="receiptItemTitle">—</dd></div>
+                <div><dt>Payment Method</dt><dd id="receiptMethod">—</dd></div>
+                <div><dt>Total Paid</dt><dd id="receiptAmount">$0.00</dd></div>
+              </dl>
+              <div class="receipt-actions mt-4">
+                <a href="marketplace.html" class="btn btn-secondary">Browse Marketplace</a>
+                <a href="../index.html" class="btn btn-primary">Return to Feed</a>
+              </div>
+            </div>
+          </section>
+
+          <!-- Right: Order Summary & Transaction History -->
+          <aside class="checkout-sidebar">
+            <section id="checkout-order-summary" class="card order-summary mb-4" aria-label="Order Summary">
+              <h2 class="font-md font-weight-semibold mb-3">Order Summary</h2>
+              <div id="orderSummaryBody"></div>
+            </section>
+
+            <section class="card order-history-card" aria-label="Recent Order History">
+              <h2 class="font-md font-weight-semibold mb-3">Recent Transactions</h2>
+              <div id="orderHistoryList" class="order-history-list"></div>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <script type="module" src="../js/pages/payments.js"></script>
+</body>
+</html>
