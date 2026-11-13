@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ads Manager — CampusConnect</title>
+  <meta name="description" content="Create, preview, and track sponsored academic showcase campaigns and hackathon promotions." />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages/ads.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="navbarMount"></div>
+
+    <div class="app-layout app-layout--two-col">
+      <div id="sidebarMount"></div>
+
+      <main class="main-content" id="mainContent">
+        <header class="card ads-page-header mb-4">
+          <div>
+            <h1 class="font-xl font-weight-bold">Campus Ads Manager</h1>
+            <p class="font-sm text-secondary mt-1">
+              Promote university clubs, research symposiums, and student projects across CampusConnect feeds.
+            </p>
+          </div>
+          <a href="checkout.html?type=ad" class="btn btn-primary">Fund New Campaign</a>
+        </header>
+
+        <!-- KPI Metrics Dashboard -->
+        <section class="ads-kpi-grid mb-4" aria-label="Campaign Performance Metrics">
+          <article class="card kpi-card">
+            <span class="font-xs text-secondary kpi-label">Total Impressions</span>
+            <strong class="font-xl font-weight-bold mt-1" id="kpiImpressions">0</strong>
+            <span class="font-xs text-success mt-1">Across feed &amp; sidebar placements</span>
+          </article>
+
+          <article class="card kpi-card">
+            <span class="font-xs text-secondary kpi-label">Total Clicks</span>
+            <strong class="font-xl font-weight-bold mt-1" id="kpiClicks">0</strong>
+            <span class="font-xs text-primary mt-1" id="kpiCtr">0.0% CTR</span>
+          </article>
+
+          <article class="card kpi-card">
+            <span class="font-xs text-secondary kpi-label">Budget Spend / Allocated</span>
+            <strong class="font-xl font-weight-bold mt-1" id="kpiSpend">$0.00</strong>
+            <span class="font-xs text-secondary mt-1" id="kpiBudgetAllocated">of $0.00 budget</span>
+          </article>
+        </section>
+
+        <!-- Campaign Builder + Live Preview Split -->
+        <section class="ads-builder-grid mb-4" aria-label="Campaign Creator and Live Preview">
+          <div class="card ads-form-card">
+            <h2 class="font-md font-weight-semibold mb-3">Create Sponsored Campaign</h2>
+            <form id="ad-campaign-form">
+              <div class="form-group">
+                <label class="form-label" for="adTitleInput">Campaign Headline</label>
+                <input
+                  type="text"
+                  id="adTitleInput"
+                  class="form-input"
+                  required
+                  placeholder="e.g., Spring Hackathon 2026 Registration"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adSponsorInput">Sponsor / Organization</label>
+                <input
+                  type="text"
+                  id="adSponsorInput"
+                  class="form-input"
+                  required
+                  placeholder="e.g., ACM Student Chapter"
+                />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="adTaglineInput">Ad Copy / Tagline</label>
+                <textarea
+                  id="adTaglineInput"
+                  class="form-input"
+                  rows="3"
+                  required
+                  placeholder="Describe your event, workshop, or academic product..."
+                ></textarea>
+              </div>
+
+              <div class="ads-form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="adAudienceInput">Target Audience</label>
+                  <select id="adAudienceInput" class="form-input">
+                    <option value="All Students">All Students</option>
+                    <option value="CS & Engineering">CS &amp; Engineering</option>
+                    <option value="Data Science & AI">Data Science &amp; AI</option>
+                    <option value="Design & Media">Design &amp; Media</option>
+                    <option value="Final Year Capstone">Final Year Capstone</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="adPlacementInput">Placement</label>
+                  <select id="adPlacementInput" class="form-input">
+                    <option value="feed">Main News Feed</option>
+                    <option value="all">Feed &amp; Right Rail</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="ads-form-row-2">
+                <div class="form-group">
+                  <label class="form-label" for="adBudgetInput">Total Budget ($)</label>
+                  <input type="number" id="adBudgetInput" class="form-input" min="10" step="5" value="150" required />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="adDurationInput">Duration (Days)</label>
+                  <input type="number" id="adDurationInput" class="form-input" min="1" max="90" value="14" required />
+                </div>
+              </div>
+
+              <div class="ads-estimator font-xs text-secondary mb-3" id="adEstimatorBox">
+                Estimated reach: <strong>3,750–5,200</strong> impressions (~$10.71/day)
+              </div>
+
+              <p id="adFormFeedback" class="font-xs mb-3 hidden" role="status"></p>
+
+              <button type="submit" class="btn btn-primary btn-block" id="launchCampaignBtn">
+                Launch Campaign
+              </button>
+            </form>
+          </div>
+
+          <!-- Live Ad Preview -->
+          <aside class="card ads-preview-card" aria-label="Live Ad Preview">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="font-md font-weight-semibold">Live Placement Preview</h2>
+              <span class="badge badge-primary" id="previewPlacementBadge">Feed Placement</span>
+            </div>
+
+            <div id="ad-live-preview" class="ad-preview">
+              <div class="ad-preview-header">
+                <span class="badge badge-primary">Sponsored</span>
+                <span class="font-xs text-muted" id="previewSponsorName">ACM Student Chapter</span>
+              </div>
+              <img src="../assets/images/cover-default.svg" alt="Campaign banner preview" class="ad-preview-banner" />
+              <h3 class="font-md font-weight-bold mt-3" id="previewAdTitle">Your Campaign Headline Appears Here</h3>
+              <p class="font-sm text-secondary mt-2" id="previewAdTagline">
+                Start typing in the campaign builder to preview how students will see your sponsored card in their feed.
+              </p>
+              <div class="ad-preview-footer mt-3">
+                <span class="font-xs text-muted" id="previewAudience">Target: All Students</span>
+                <button type="button" class="btn btn-outline-primary btn-xs">Learn More</button>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <!-- Active Campaigns List -->
+        <section class="card ads-campaigns-section" aria-label="Active Campaigns">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <h2 class="font-md font-weight-semibold">Active &amp; Scheduled Campaigns</h2>
+            <span class="font-xs text-secondary" id="campaignsCountLabel">0 campaigns</span>
+          </div>
+
+          <div id="campaignsList" class="campaigns-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <script type="module" src="../js/pages/ads.js"></script>
+</body>
+</html>

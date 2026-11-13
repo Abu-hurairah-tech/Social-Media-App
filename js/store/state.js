@@ -855,6 +855,15 @@ export class StateManager {
     return [...this.data.adCampaigns];
   }
 
+  getActiveAds(placement = null) {
+    return this.data.adCampaigns.filter((ad) => {
+      if (ad.status !== 'active') return false;
+      if (!placement) return true;
+      const adPlacement = ad.placement || 'feed';
+      return adPlacement === placement || adPlacement === 'all';
+    });
+  }
+
   createAdCampaign(campaignData = {}) {
     const currentUser = this.getCurrentUser();
     const newCampaign = {
@@ -863,7 +872,8 @@ export class StateManager {
       sponsorName: campaignData.sponsorName ? campaignData.sponsorName.trim() : (currentUser ? currentUser.name : 'University Sponsor'),
       tagline: campaignData.tagline ? campaignData.tagline.trim() : '',
       targetAudience: campaignData.targetAudience || 'All Students',
-      budgetTotal: parseFloat(campaignData.budgetTotal) || 100.00,
+      placement: campaignData.placement || 'feed',
+      budgetTotal: parseFloat(campaignData.budgetTotal ?? campaignData.budget) || 100.00,
       budgetSpent: 0.00,
       clicks: 0,
       impressions: 0,
@@ -880,6 +890,29 @@ export class StateManager {
     this.publish('ads:created', newCampaign);
     this.publish('ads:updated', this.data.adCampaigns);
     return newCampaign;
+  }
+
+  createAd(campaignData = {}) {
+    return this.createAdCampaign(campaignData);
+  }
+
+  recordAdImpression(adId) {
+    const ad = this.data.adCampaigns.find((a) => a.id === adId);
+    if (!ad) return null;
+    ad.impressions = (ad.impressions || 0) + 1;
+    this.saveState();
+    this.publish('ads:updated', this.data.adCampaigns);
+    return ad;
+  }
+
+  recordAdClick(adId) {
+    const ad = this.data.adCampaigns.find((a) => a.id === adId);
+    if (!ad) return null;
+    ad.clicks = (ad.clicks || 0) + 1;
+    ad.budgetSpent = Math.min(ad.budgetTotal || 100, Number(((ad.budgetSpent || 0) + 0.35).toFixed(2)));
+    this.saveState();
+    this.publish('ads:updated', this.data.adCampaigns);
+    return ad;
   }
 
   // ==========================================================================

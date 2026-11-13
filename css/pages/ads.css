@@ -1,0 +1,169 @@
+/* ==========================================================================
+   Ads Manager Page Styles
+   KPI metric cards, campaign creator + live preview split, campaign list
+   ========================================================================== */
+
+.ads-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-5);
+}
+
+.ads-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+}
+
+.kpi-label {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: var(--font-weight-semibold);
+}
+
+.ads-builder-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.ads-form-card,
+.ads-preview-card,
+.ads-campaigns-section {
+  padding: var(--space-5);
+}
+
+.ads-form-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.ads-estimator {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-block {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+}
+
+.ad-preview {
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  background: var(--bg-body);
+}
+
+.ad-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.ad-preview-banner {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--bg-hover);
+}
+
+.ad-preview-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.campaigns-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.campaign-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.campaign-row-main {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.campaign-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.campaign-stat-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 72px;
+}
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.campaign-actions .btn {
+  min-height: 44px;
+}
+
+@media (max-width: 1024px) {
+  .ads-builder-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ads-kpi-grid,
+  .ads-form-row-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .ads-page-header,
+  .ads-form-card,
+  .ads-preview-card,
+  .ads-campaigns-section {
+    padding: var(--space-4);
+  }
+
+  .ads-page-header .btn,
+  .campaign-actions,
+  .campaign-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
