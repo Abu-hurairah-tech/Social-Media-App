@@ -748,6 +748,14 @@ export class StateManager {
     return [...this.data.groups];
   }
 
+  getGroupById(groupId) {
+    return this.data.groups.find((g) => g.id === groupId) || null;
+  }
+
+  getGroupPosts(groupId) {
+    return this.getPosts({ groupId });
+  }
+
   createGroup(groupData = {}) {
     const currentUserId = this.getCurrentUser() ? this.getCurrentUser().id : 'u1';
     const newGroup = {
