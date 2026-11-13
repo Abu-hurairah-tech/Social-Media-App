@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile — Academic Coursework Showcase</title>
+
+  <!-- Core Design Tokens & Modular Stylesheets -->
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+
+  <!-- Feed & Dedicated Profile Stylesheets -->
+  <link rel="stylesheet" href="../css/pages/feed.css">
+  <link rel="stylesheet" href="../css/pages/profile.css">
+</head>
+<body class="profile-body">
+  <div class="app-shell">
+    <!-- Global Header Navigation Mount -->
+    <div id="navbarMount"></div>
+
+    <!-- 3-Column Responsive Application Layout -->
+    <div class="app-layout app-container">
+      <!-- Left Column: Sidebar Navigation Mount -->
+      <aside id="sidebarMount" class="sidebar-left" role="navigation" aria-label="Main Navigation"></aside>
+
+      <!-- Center Column: Profile Header, Tabs & Dynamic Content -->
+      <main class="main-content profile-main" role="main">
+        <!-- Quick Peer Profile Switcher -->
+        <section id="profilePeerSwitcher" class="card peer-switcher-card" aria-label="Switch Student Showcase Profile">
+          <div class="peer-switcher-header">
+            <span class="font-xs font-weight-semibold text-muted">Browse Student Profiles:</span>
+            <div class="peer-switcher-list" id="peerSwitcherList">
+              <button type="button" class="peer-pill active" data-user-id="u1">Harry Thorne</button>
+              <button type="button" class="peer-pill" data-user-id="u2">Elena Rostova</button>
+              <button type="button" class="peer-pill" data-user-id="u3">Marcus Vance</button>
+              <button type="button" class="peer-pill" data-user-id="u4">Priya Sharma</button>
+              <button type="button" class="peer-pill" data-user-id="u5">Liam Gallagher</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profile Header Card -->
+        <section id="profile-header" class="card profile-header" aria-label="Student Profile Header">
+          <!-- Cover Photo Banner -->
+          <div id="profileCoverBanner" class="profile-cover-banner">
+            <img id="profileCoverImg" src="../assets/images/cover-default.svg" alt="Student profile cover banner" class="profile-cover-img" />
+            <div class="profile-cover-overlay">
+              <span class="badge badge-primary profile-university-badge" id="profileUniversityBadge">Pacific University</span>
+              <button type="button" class="btn btn-secondary btn-sm profile-cover-edit-btn" id="btnEditCover" aria-label="Update profile cover or details">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+                <span>Customize Cover</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Identity Bar: Overlapping Avatar, Name, Badges & Actions -->
+          <div class="profile-identity-bar">
+            <div class="profile-identity-left">
+              <div class="profile-avatar-wrapper">
+                <span class="avatar profile-avatar-lg" id="profileAvatarWrapper">
+                  <img id="profileAvatarImg" src="../assets/images/avatar-1.svg" alt="Student avatar" />
+                  <span class="avatar-status online" title="Active on Campus Network"></span>
+                </span>
+              </div>
+              <div class="profile-identity-text">
+                <div class="profile-name-row">
+                  <h1 class="profile-name" id="profileName">Harry Thorne</h1>
+                  <span class="badge badge-accent badge-xs" id="profileYearBadge">Senior</span>
+                </div>
+                <p class="profile-headline" id="profileHeadline">CS Senior &amp; Distributed Systems Enthusiast</p>
+                <div class="profile-meta-badges">
+                  <span class="badge badge-primary badge-xs" id="profileMajorBadge">Computer Science</span>
+                  <span class="badge badge-secondary badge-xs" id="profileSemesterBadge">Fall 2026</span>
+                  <span class="badge badge-course badge-xs" id="profileStudentIdBadge">PU-2023-CS042</span>
+                  <span class="font-xs text-muted profile-location-text" id="profileLocation">Campus Science Center, Lab 304</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contextual Profile Action Buttons -->
+            <div class="profile-actions" id="profileActions">
+              <button type="button" class="btn btn-primary btn-sm" id="btnEditProfile" aria-label="Edit Profile">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                <span>Edit Profile</span>
+              </button>
+              <button type="button" class="btn btn-outline-primary btn-sm hidden" id="btnProfileFriendAction" aria-label="Connect with peer">
+                <span>Add Study Peer</span>
+              </button>
+              <a href="chat.html" class="btn btn-secondary btn-sm hidden" id="btnProfileMessage" aria-label="Send direct message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Message</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Bio Summary -->
+          <div class="profile-bio-strip">
+            <p class="profile-bio-text" id="profileBio">
+              Building fault-tolerant distributed systems and modern web applications.
+            </p>
+          </div>
+
+          <!-- Academic Stats Strip -->
+          <div class="profile-stats-bar" id="profileStatsBar">
+            <div class="profile-stat-item">
+              <span class="profile-stat-value" id="statPostsCount">0</span>
+              <span class="profile-stat-label">Coursework Posts</span>
+            </div>
+            <div class="profile-stat-item">
+              <span class="profile-stat-value" id="statProjectsCount">0</span>
+              <span class="profile-stat-label">Project Showcases</span>
+            </div>
+            <div class="profile-stat-item">
+              <span class="profile-stat-value" id="statFriendsCount">0</span>
+              <span class="profile-stat-label">Study Peers</span>
+            </div>
+            <div class="profile-stat-item">
+              <span class="profile-stat-value" id="statGpaValue">3.92</span>
+              <span class="profile-stat-label">Cumulative GPA</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profile Navigation Tabs -->
+        <nav id="profileTabs" class="card profile-tabs-card" aria-label="Profile Sections">
+          <div class="tab-nav profile-tabs" role="tablist">
+            <button type="button" class="profile-tab-btn active" data-tab="timeline" role="tab" aria-selected="true" aria-controls="profileTabTimeline">
+              Timeline
+            </button>
+            <button type="button" class="profile-tab-btn" data-tab="projects" role="tab" aria-selected="false" aria-controls="profileTabProjects">
+              Project Showcases
+            </button>
+            <button type="button" class="profile-tab-btn" data-tab="about" role="tab" aria-selected="false" aria-controls="profileTabAbout">
+              Academic About
+            </button>
+            <button type="button" class="profile-tab-btn" data-tab="friends" role="tab" aria-selected="false" aria-controls="profileTabFriends">
+              Cohort Peers
+            </button>
+          </div>
+        </nav>
+
+        <!-- Tab Panel 1: Timeline -->
+        <section id="profileTabTimeline" class="profile-tab-panel" role="tabpanel" aria-label="User Coursework Timeline">
+          <!-- Quick Post Composer (Own Profile Only) -->
+          <div id="profileQuickComposerCard" class="card composer-card mb-4">
+            <form id="profileQuickPostForm" class="composer-form">
+              <div class="composer-header">
+                <div class="composer-author-info">
+                  <span class="avatar avatar-sm">
+                    <img id="profileComposerAvatar" src="../assets/images/avatar-1.svg" alt="Current user avatar" />
+                  </span>
+                  <span class="font-sm font-weight-semibold">Share a new coursework update on your timeline</span>
+                </div>
+              </div>
+              <div class="composer-body">
+                <label for="profilePostTitle" class="sr-only">Showcase Title</label>
+                <input
+                  type="text"
+                  id="profilePostTitle"
+                  class="form-control form-control-sm mb-2"
+                  placeholder="Showcase title (e.g. Distributed Lock Service Demo)"
+                />
+                <label for="profilePostContent" class="sr-only">Post Content</label>
+                <textarea
+                  id="profilePostContent"
+                  class="form-control composer-textarea"
+                  rows="2"
+                  placeholder="What academic milestone or project did you complete?"
+                  required
+                ></textarea>
+              </div>
+              <div class="composer-footer">
+                <div class="composer-tools">
+                  <label for="profilePostCourse" class="sr-only">Course Code</label>
+                  <select id="profilePostCourse" class="form-control form-control-sm">
+                    <option value="CS501">CS-501 Distributed Systems</option>
+                    <option value="WT301">WT-301 Web Architecture</option>
+                    <option value="AI602">AI-602 Deep Learning</option>
+                    <option value="SEC550">SEC-550 Applied Cryptography</option>
+                    <option value="BIO420">BIO-420 Genomics</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" id="btnProfilePostSubmit">
+                  Publish to Timeline
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Timeline Feed Stream -->
+          <div id="profile-timeline-stream" class="feed-posts-container feed-stream" aria-live="polite">
+            <!-- Dynamically populated by js/pages/profile.js using renderPostCard -->
+          </div>
+        </section>
+
+        <!-- Tab Panel 2: Project Showcases -->
+        <section id="profileTabProjects" class="profile-tab-panel hidden" role="tabpanel" aria-label="Project Showcases">
+          <div id="profile-projects-grid" class="profile-projects-grid">
+            <!-- Dynamically populated by js/pages/profile.js -->
+          </div>
+        </section>
+
+        <!-- Tab Panel 3: Academic About -->
+        <section id="profileTabAbout" class="profile-tab-panel hidden" role="tabpanel" aria-label="Academic About Details">
+          <div id="profile-about-content" class="profile-about-grid">
+            <!-- Dynamically populated by js/pages/profile.js -->
+          </div>
+        </section>
+
+        <!-- Tab Panel 4: Cohort Peers / Friends -->
+        <section id="profileTabFriends" class="profile-tab-panel hidden" role="tabpanel" aria-label="Cohort Peers">
+          <div id="profile-friends-grid" class="profile-friends-grid">
+            <!-- Dynamically populated by js/pages/profile.js -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Right Column: Academic Summary Widgets -->
+      <aside class="sidebar-right profile-aside" role="complementary" aria-label="Profile Academic Summary">
+        <!-- Academic Credentials Widget -->
+        <div class="card widget-card" id="profileCredentialsWidget">
+          <div class="widget-header flex items-center justify-between">
+            <h3 class="widget-title font-sm font-weight-semibold">Academic Credentials</h3>
+            <span class="badge badge-primary badge-xs">Verified</span>
+          </div>
+          <div class="widget-body" id="profileCredentialsBody">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Technical Skills Widget -->
+        <div class="card widget-card" id="profileSkillsWidget">
+          <div class="widget-header flex items-center justify-between">
+            <h3 class="widget-title font-sm font-weight-semibold">Technical Skills</h3>
+          </div>
+          <div class="widget-body" id="profileSkillsBody">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Enrolled Courses Widget -->
+        <div class="card widget-card" id="profileCoursesWidget">
+          <div class="widget-header flex items-center justify-between">
+            <h3 class="widget-title font-sm font-weight-semibold">Enrolled Courses</h3>
+          </div>
+          <div class="widget-body" id="profileCoursesBody">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Mobile Bottom Navigation Mount -->
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <!-- Page Controller Script (ES Module) -->
+  <script type="module" src="../js/pages/profile.js"></script>
+</body>
+</html>
