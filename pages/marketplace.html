@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Marketplace — CampusConnect</title>
+  <meta name="description" content="Buy, sell, and trade textbooks, hardware, study notes, and academic resources with verified students." />
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/reset.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <link rel="stylesheet" href="../css/pages/marketplace.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Fixed Navigation Bar -->
+    <div id="navbarMount"></div>
+
+    <div class="app-layout app-layout--two-col">
+      <!-- Left Navigation Sidebar -->
+      <div id="sidebarMount"></div>
+
+      <!-- Main Marketplace Workspace -->
+      <main class="main-content" id="mainContent">
+        <section class="marketplace-header card mb-4" aria-labelledby="marketplacePageHeading">
+          <div class="marketplace-header-top">
+            <div>
+              <h1 id="marketplacePageHeading" class="font-xl font-weight-bold">Campus Marketplace</h1>
+              <p class="font-sm text-secondary mt-1">
+                Trade textbooks, hardware kits, and peer-reviewed study notes across departments.
+              </p>
+            </div>
+            <button
+              type="button"
+              id="createListingBtn"
+              class="btn btn-primary"
+              aria-label="Create Listing"
+            >
+              + Sell Item
+            </button>
+          </div>
+
+          <div class="marketplace-controls mt-4">
+            <div class="marketplace-search-box">
+              <label for="marketplaceSearchInput" class="sr-only">Search marketplace listings</label>
+              <input
+                type="search"
+                id="marketplaceSearchInput"
+                class="form-input"
+                placeholder="Search textbooks, microcontrollers, course codes (e.g. CS301)..."
+                aria-label="Search marketplace listings"
+              />
+            </div>
+
+            <div class="marketplace-filters" role="tablist" aria-label="Marketplace Category Filters">
+              <button type="button" class="filter-chip is-active" data-category="All" role="tab" aria-selected="true">All</button>
+              <button type="button" class="filter-chip" data-category="Textbooks" role="tab" aria-selected="false">Textbooks</button>
+              <button type="button" class="filter-chip" data-category="Hardware" role="tab" aria-selected="false">Hardware</button>
+              <button type="button" class="filter-chip" data-category="Notes" role="tab" aria-selected="false">Notes</button>
+              <button type="button" class="filter-chip" data-category="Software" role="tab" aria-selected="false">Software</button>
+            </div>
+          </div>
+
+          <div class="marketplace-summary-bar mt-3" id="marketplaceSummaryBar">
+            <span class="font-xs text-secondary" id="listingCountLabel">Loading listings...</span>
+            <label class="marketplace-toggle-label font-xs text-secondary">
+              <input type="checkbox" id="hideSoldCheckbox" />
+              Hide sold items
+            </label>
+          </div>
+        </section>
+
+        <!-- Product Catalog Grid -->
+        <section aria-label="Marketplace Listings">
+          <div id="marketplace-grid" class="marketplace-grid" aria-live="polite"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div id="mobileNavMount"></div>
+  </div>
+
+  <script type="module" src="../js/pages/marketplace.js"></script>
+</body>
+</html>
